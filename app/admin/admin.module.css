@@ -1,0 +1,104 @@
+.page { min-height: 100vh; background: #f5f5f3; display: flex; flex-direction: column; }
+
+.loadingWrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.spinner { width: 36px; height: 36px; border: 3px solid #e8e8e3; border-top-color: #5385E4; border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.errorWrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.errorMsg { font-size: 16px; color: #c00000; }
+
+/* 헤더 */
+.header { background: #1a1a2e; padding: 0 1.5rem; position: sticky; top: 0; z-index: 20; }
+.headerInner { max-width: 1200px; margin: 0 auto; height: 54px; display: flex; align-items: center; justify-content: space-between; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brandMark { font-size: 18px; font-weight: 700; color: #5385E4; }
+.adminBadge { font-size: 10px; font-weight: 700; background: #e03535; color: #fff; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.05em; }
+.headerRight { display: flex; align-items: center; gap: 14px; }
+.adminEmail { font-size: 13px; color: #888; }
+.logoutBtn { padding: 6px 14px; border-radius: 8px; border: 1px solid #444; background: transparent; color: #ccc; font-family: inherit; font-size: 12px; cursor: pointer; }
+.logoutBtn:hover { background: #2a2a3e; }
+
+/* 레이아웃 */
+.layout { display: flex; flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 24px 1.5rem; gap: 20px; align-items: flex-start; }
+@media (max-width: 768px) { .layout { flex-direction: column; } }
+
+/* 사이드바 */
+.sidebar { width: 180px; flex-shrink: 0; background: #fff; border: 1px solid #e8e8e3; border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 2px; position: sticky; top: 74px; }
+@media (max-width: 768px) { .sidebar { width: 100%; flex-direction: row; position: static; } }
+.sidebarBtn { padding: 10px 14px; border-radius: 10px; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 500; color: #555; cursor: pointer; text-align: left; transition: all 0.12s; }
+.sidebarBtn:hover { background: #f5f5f3; }
+.sidebarBtnActive { background: #eef2fd; color: #2d5bbf; font-weight: 700; }
+
+/* 메인 */
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.pageTitle { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 4px; }
+
+/* 통계 카드 */
+.statsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 900px) { .statsGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .statsGrid { grid-template-columns: 1fr; } }
+.statCard { background: #fff; border: 1px solid #e8e8e3; border-radius: 14px; padding: 18px 20px; }
+.statLabel { font-size: 12px; color: #888; margin-bottom: 6px; }
+.statValue { font-size: 28px; font-weight: 800; color: #111; letter-spacing: -0.5px; }
+.statSub { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+/* 섹션 */
+.section { background: #fff; border: 1px solid #e8e8e3; border-radius: 14px; padding: 20px 22px; }
+.sectionTitle { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 16px; }
+
+/* 위험도 바 */
+.riskRow { display: flex; flex-direction: column; gap: 12px; }
+.riskBar { display: flex; align-items: center; gap: 12px; }
+.riskBarLabel { width: 36px; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.riskBarTrack { flex: 1; height: 10px; background: #f0f0ee; border-radius: 5px; overflow: hidden; }
+.riskBarFill { height: 100%; border-radius: 5px; transition: width 0.4s; }
+.riskBarVal { width: 90px; font-size: 12px; color: #555; text-align: right; flex-shrink: 0; }
+
+/* 테이블 */
+.tableInfo { font-size: 13px; color: #888; margin-bottom: 8px; }
+.table { background: #fff; border: 1px solid #e8e8e3; border-radius: 14px; overflow: hidden; }
+.tableHead { display: grid; grid-template-columns: 2fr 1fr 2fr 1fr; gap: 12px; padding: 10px 16px; background: #f5f5f3; font-size: 12px; font-weight: 700; color: #888; }
+.tableRow { display: grid; grid-template-columns: 2fr 1fr 2fr 1fr; gap: 12px; padding: 12px 16px; border-top: 1px solid #f0f0ee; font-size: 13px; color: #333; align-items: center; }
+.tableRow:hover { background: #fafafa; }
+.tableEmpty { padding: 24px; text-align: center; color: #aaa; font-size: 13px; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mono { font-size: 12px; color: #888; }
+.auditAction { font-size: 12px; font-weight: 600; color: #2d5bbf; background: #eef2fd; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+
+/* 유저 관리 */
+.searchRow { display: flex; gap: 8px; margin-bottom: 12px; }
+.searchInput { flex: 1; padding: 10px 14px; border: 1px solid #e8e8e3; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; }
+.searchInput:focus { border-color: #5385E4; }
+.searchBtn { padding: 10px 18px; border-radius: 10px; border: none; background: #5385E4; color: #fff; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.planBadge { font-size: 12px; font-weight: 600; }
+.planSelect { font-size: 12px; border: 1px solid #c5d4f5; border-radius: 6px; padding: 3px 6px; background: #eef2fd; }
+.editBtn { font-size: 12px; padding: 4px 10px; border-radius: 6px; border: 1px solid #e8e8e3; background: #f5f5f3; cursor: pointer; }
+.editBtn:hover { background: #eee; }
+.pagination { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.pageBtn { width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e8e8e3; background: #fff; font-family: inherit; font-size: 13px; cursor: pointer; }
+.pageBtnActive { background: #5385E4; color: #fff; border-color: #5385E4; }
+
+/* 유저 테이블 컬럼 조정 */
+.table .tableHead:has(span:nth-child(5)),
+.table .tableRow:has(span:nth-child(5)) {
+  grid-template-columns: 2fr 1fr 1fr 1fr 60px;
+}
+
+/* 이메일 */
+.emailCard { background: #fff; border: 1px solid #e8e8e3; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+.emailTypeRow { display: flex; gap: 8px; }
+.emailTypeBtn { padding: 9px 18px; border-radius: 10px; border: 1px solid #e8e8e3; background: #f5f5f3; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer; }
+.emailTypeBtnActive { background: #eef2fd; border-color: #5385E4; color: #2d5bbf; font-weight: 700; }
+.fieldLabel { font-size: 13px; font-weight: 600; color: #333; margin-bottom: -8px; }
+.fieldInput { padding: 10px 14px; border: 1px solid #e8e8e3; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; width: 100%; box-sizing: border-box; }
+.fieldInput:focus { border-color: #5385E4; }
+.fieldTextarea { padding: 10px 14px; border: 1px solid #e8e8e3; border-radius: 10px; font-family: inherit; font-size: 14px; outline: none; width: 100%; box-sizing: border-box; resize: vertical; line-height: 1.6; }
+.fieldTextarea:focus { border-color: #5385E4; }
+.fieldRow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fieldHalf { display: flex; flex-direction: column; gap: 6px; }
+.sendBtn { padding: 13px; border-radius: 12px; border: none; background: #5385E4; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.sendBtn:hover { background: #3d6fd4; }
+.sendBtn:disabled { background: #aaa; cursor: not-allowed; }
+.emailResult { padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; }
+.emailResultOk { background: #edf7ef; color: #276b3a; }
+.emailResultError { background: #fff1f1; color: #c00000; }

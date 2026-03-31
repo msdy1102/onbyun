@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* reset — Tailwind preflight로 대체 */
+
+:root {
+  /* ── 메인 컬러 #5385E4 ── */
+  --accent:        #5385E4;
+  --accent-dark:   #3a6ad4;       /* hover */
+  --accent-light:  #eef2fd;       /* 연한 배경 */
+  --accent-border: #c5d4f5;       /* 테두리 */
+
+  /* ── 서브 컬러 #C3C3C3 ── */
+  --sub:           #C3C3C3;
+  --sub-dark:      #a8a8a8;
+  --sub-light:     #f5f5f5;
+
+  /* ── 배경 / 카드 ── */
+  --bg:            #ffffff;
+  --bg-card:       #ffffff;
+  --bg-muted:      #f8f8f8;
+
+  /* ── 테두리 ── */
+  --border:        #e8e8e8;
+  --border-dark:   #C3C3C3;
+
+  /* ── 텍스트 ── */
+  --text-primary:   #111111;
+  --text-secondary: #555555;
+  --text-muted:     #C3C3C3;
+
+  /* ── 위험도 (위험/주의/확인) — 채도 낮춰 메인 컬러와 충돌 방지 ── */
+  --danger:        #e03535;
+  --danger-light:  #fff1f1;
+  --danger-border: #fcc;
+
+  --warn:          #d08600;
+  --warn-light:    #fffbee;
+  --warn-border:   #ffe5a0;
+
+  --info:          #5385E4;       /* 확인 = 메인 컬러 */
+  --info-light:    #eef2fd;
+  --info-border:   #c5d4f5;
+
+  --success:       #2a9d5c;
+  --success-light: #f0fdf4;
+
+  /* ── 라운드 ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Noto Sans KR', -apple-system, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent-light); color: var(--accent); }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sub); border-radius: 3px; }
+
+/* ── Tailwind preflight 보완 — 기존 앱 컴포넌트 보호 ── */
+@layer base {
+  /* CSS Module을 사용하는 기존 컴포넌트들은 자체 스타일을 갖고 있으므로 추가 보호 불필요 */
+  /* 랜딩 외 페이지 body font는 Pretendard 우선 적용 */
+  body {
+    font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}

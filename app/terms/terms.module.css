@@ -1,0 +1,237 @@
+/* app/terms/terms.module.css — 약관 페이지 공통 스타일 */
+
+.wrap {
+  min-height: 100vh;
+  background: #f7f8fa;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ── 헤더 ── */
+.header {
+  background: #fff;
+  border-bottom: 1px solid #e8eaed;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.headerInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+.brandMark {
+  font-size: 16px;
+  font-weight: 800;
+  color: #3B5BDB;
+  letter-spacing: -0.5px;
+}
+.brandSub {
+  font-size: 12px;
+  color: #868e96;
+}
+.headerBack {
+  margin-left: auto;
+  font-size: 13px;
+  color: #3B5BDB;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.headerBack:hover { background: #f1f3f5; }
+
+/* ── 레이아웃 ── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* ── 좌측 사이드 네비게이션 ── */
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 80px;
+}
+.sidebarTitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: #adb5bd;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.navItem a {
+  display: block;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.15s;
+  border-left: 3px solid transparent;
+}
+.navItem a:hover {
+  background: #f1f3f5;
+  color: #3B5BDB;
+}
+.navItem.active a {
+  background: #eef2ff;
+  color: #3B5BDB;
+  font-weight: 600;
+  border-left-color: #3B5BDB;
+}
+.navDivider {
+  height: 1px;
+  background: #e9ecef;
+  margin: 8px 0;
+}
+
+/* ── 본문 ── */
+.content {
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  padding: 40px 48px;
+}
+.pageTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #212529;
+  margin: 0 0 8px;
+  letter-spacing: -0.5px;
+}
+.updateDate {
+  font-size: 13px;
+  color: #868e96;
+  margin: 0 0 32px;
+}
+.effectiveDate {
+  display: inline-block;
+  background: #eef2ff;
+  color: #3B5BDB;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 32px;
+}
+
+/* ── 본문 타이포그래피 ── */
+.content h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #212529;
+  margin: 40px 0 16px;
+  padding-top: 40px;
+  border-top: 1px solid #f1f3f5;
+}
+.content h2:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+.content h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #343a40;
+  margin: 24px 0 10px;
+}
+.content p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #495057;
+  margin: 0 0 12px;
+}
+.content ol, .content ul {
+  padding-left: 20px;
+  margin: 0 0 12px;
+}
+.content li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #495057;
+  margin-bottom: 4px;
+}
+.content ol ol {
+  margin-top: 4px;
+  list-style-type: decimal;
+}
+.content strong {
+  font-weight: 700;
+  color: #212529;
+}
+
+.infoBox {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: #495057;
+  line-height: 1.7;
+}
+.infoBox strong {
+  color: #212529;
+}
+
+.highlight {
+  background: #fff3cd;
+  border-left: 3px solid #ffc107;
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  margin: 16px 0;
+  font-size: 13px;
+  color: #664d03;
+  line-height: 1.7;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    padding: 24px 16px 60px;
+    gap: 24px;
+  }
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+  .navList { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+  .navItem a { padding: 6px 10px; font-size: 13px; }
+  .navDivider { display: none; }
+  .content {
+    padding: 24px 20px;
+  }
+  .pageTitle { font-size: 20px; }
+}

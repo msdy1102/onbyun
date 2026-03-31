@@ -1,0 +1,329 @@
+/* ══════════════════════════════════════════
+   마이페이지 — 토스/카카오뱅크 스타일
+   모바일 우선, 데스크탑 카드 레이아웃
+══════════════════════════════════════════ */
+
+.page {
+  min-height: 100vh;
+  background: #f5f5f3;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 로딩 ── */
+.loadingPage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f3;
+}
+.loadingSpinner {
+  width: 32px; height: 32px;
+  border: 3px solid #e0e0de;
+  border-top-color: #5385E4;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 헤더 ── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  border-bottom: 1px solid #ebebeb;
+}
+.backBtn {
+  width: 44px; height: 44px;
+  border: none; background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #111; border-radius: 50%;
+  transition: background 0.12s;
+}
+.backBtn:hover { background: #f5f5f3; }
+.headerTitle {
+  font-size: 16px; font-weight: 700; color: #111;
+}
+
+/* ── 바디 ── */
+.body {
+  flex: 1;
+  max-width: 540px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 0 80px;
+}
+
+/* ── 프로필 카드 ── */
+.profileCard {
+  background: #fff;
+  padding: 28px 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+.avatarWrap { flex-shrink: 0; }
+.avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ebebeb;
+}
+.avatarFallback {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: #5385E4;
+  color: #fff;
+  font-size: 26px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.profileInfo { flex: 1; min-width: 0; }
+.profileName {
+  font-size: 20px; font-weight: 700; color: #111;
+  margin-bottom: 4px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.profileEmail {
+  font-size: 13px; color: #888; margin-bottom: 10px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.planChip {
+  display: inline-block;
+  font-size: 12px; font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ── 공통 섹션 ── */
+.section {
+  background: #fff;
+  margin-bottom: 10px;
+  padding: 0 20px;
+}
+.sectionLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 0.05em;
+  padding: 16px 0 8px;
+  border-bottom: 1px solid #f0f0ee;
+}
+
+/* ── 메뉴 행 (클릭 가능) ── */
+.menuRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.menuRow:active { background: #fafafa; }
+.menuVal {
+  font-size: 16px; font-weight: 500; color: #111;
+}
+.chevron { color: #ccc; flex-shrink: 0; }
+
+/* ── 닉네임 인라인 편집 ── */
+.nickEditWrap {
+  padding: 12px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nickInput {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-family: inherit;
+  border: 1.5px solid #e0e0de;
+  border-radius: 10px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.nickInput:focus { border-color: #5385E4; }
+.nickInputErr { border-color: #e03535; }
+.nickBtnRow { display: flex; gap: 8px; }
+.nickCancelBtn {
+  flex: 1; padding: 11px;
+  border: 1px solid #e0e0de; border-radius: 10px;
+  background: #f5f5f3; color: #555;
+  font-family: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer;
+}
+.nickSaveBtn {
+  flex: 1; padding: 11px;
+  border: none; border-radius: 10px;
+  background: #5385E4; color: #fff;
+  font-family: inherit; font-size: 14px; font-weight: 700;
+  cursor: pointer;
+}
+.nickSaveBtn:disabled { background: #aaa; cursor: not-allowed; }
+.nickErr { font-size: 12px; color: #e03535; }
+
+/* ── 계정 정보 ── */
+.infoRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid #f5f5f3;
+  gap: 12px;
+}
+.infoKey { font-size: 14px; color: #888; flex-shrink: 0; }
+.infoVal { font-size: 14px; color: #111; font-weight: 500; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.googleTag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 600; color: #555;
+  background: #f5f5f3; border: 1px solid #e8e8e3;
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* ── 토글 ── */
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f5f3;
+  gap: 16px;
+}
+.toggleInfo { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.toggleTitle { font-size: 15px; font-weight: 600; color: #111; }
+.toggleDesc { font-size: 13px; color: #aaa; line-height: 1.4; }
+.optTag {
+  font-size: 10px; color: #aaa; font-weight: 400;
+  background: #f5f5f3; border: 1px solid #e8e8e3;
+  padding: 1px 6px; border-radius: 10px; margin-left: 4px;
+  vertical-align: middle;
+}
+.toggle {
+  width: 48px; height: 28px;
+  border-radius: 14px;
+  background: #d8d8d5;
+  border: none; cursor: pointer;
+  position: relative; flex-shrink: 0;
+  transition: background 0.2s;
+  padding: 0;
+}
+.toggleOn { background: #5385E4; }
+.toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+.toggleThumb {
+  position: absolute;
+  top: 4px; left: 4px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  transition: transform 0.2s;
+}
+.toggleOn .toggleThumb { transform: translateX(20px); }
+
+/* ── 플랜 ── */
+.planRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+}
+.planName { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.planDesc { font-size: 13px; color: #888; }
+.upgradeBtn {
+  padding: 9px 18px;
+  background: #5385E4; color: #fff;
+  border-radius: 20px;
+  font-size: 13px; font-weight: 700;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.upgradeBtn:hover { background: #3d6fd4; }
+
+/* ── 로그아웃 ── */
+.logoutBtn {
+  width: calc(100% - 32px);
+  margin: 0 16px 10px;
+  padding: 15px;
+  background: #fff;
+  border: 1.5px solid #e0e0de;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px; font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.logoutBtn:hover { background: #fef0f0; border-color: #f5cccc; color: #c00000; }
+
+/* ── 탈퇴 ── */
+.withdrawWrap {
+  padding: 4px 20px 20px;
+  text-align: center;
+}
+.withdrawLink {
+  font-size: 13px; color: #bbb;
+  background: none; border: none;
+  cursor: pointer; text-decoration: underline;
+  font-family: inherit;
+}
+.withdrawLink:hover { color: #e03535; }
+.withdrawBox {
+  background: #fff;
+  border: 1px solid #ffd0d0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.withdrawMsg { font-size: 13px; color: #c00000; text-align: left; line-height: 1.6; }
+.withdrawBtns { display: flex; gap: 8px; }
+.withdrawCancel {
+  flex: 1; padding: 10px;
+  border: 1px solid #e0e0de; border-radius: 9px;
+  background: #f5f5f3; color: #555;
+  font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.withdrawConfirm {
+  flex: 1; padding: 10px;
+  border: none; border-radius: 9px;
+  background: #e03535; color: #fff;
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+
+/* ── 토스트 ── */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20,20,20,0.88);
+  color: #fff;
+  font-size: 14px; font-weight: 500;
+  padding: 11px 22px;
+  border-radius: 24px;
+  z-index: 200;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  animation: fadeUp 0.18s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── 데스크탑 ── */
+@media (min-width: 640px) {
+  .page { background: #f0f0ee; }
+  .body { padding: 32px 16px 80px; }
+  .profileCard { border-radius: 14px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .section { border-radius: 14px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+  .logoutBtn { margin: 0 0 12px; width: 100%; border-radius: 14px; }
+  .withdrawWrap { padding: 0 0 20px; }
+}
