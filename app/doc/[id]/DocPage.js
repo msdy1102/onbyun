@@ -411,10 +411,10 @@ export default function DocPage({ data }) {
           </Link>
           <nav className={styles.nav}>
             <Link href="/" className={styles.navBtn}>홈</Link>
-            <Link href="/app-service?tab=list" className={styles.navBtn}>전체 문서</Link>
-            <Link href="/app-service?tab=calc" className={styles.navBtn}>계산기</Link>
-            <Link href="/app-service?tab=support" className={styles.navBtn}>정부지원</Link>
-            <Link href="/app-service?tab=ai" className={styles.navBtn}>AI 분석</Link>
+            <Link href="/doc" className={styles.navBtn}>전체 문서</Link>
+            <Link href="/calc" className={styles.navBtn}>계산기</Link>
+            <Link href="/support" className={styles.navBtn}>정부지원</Link>
+            <Link href="/ai" className={styles.navBtn}>AI 분석</Link>
           </nav>
         </div>
       </header>
@@ -424,7 +424,7 @@ export default function DocPage({ data }) {
         <nav className={styles.breadcrumb}>
           <Link href="/" className={styles.breadcrumbLink}>홈</Link>
           <span className={styles.breadcrumbSep}>›</span>
-          <Link href="/app-service?tab=list" className={styles.breadcrumbLink}>전체 문서 목록</Link>
+          <Link href="/doc" className={styles.breadcrumbLink}>전체 문서 목록</Link>
           {category && (
             <>
               <span className={styles.breadcrumbSep}>›</span>
@@ -588,7 +588,7 @@ export default function DocPage({ data }) {
               <div className={styles.aiCtaTitle}>🤖 실제 계약서를 분석하고 싶으신가요?</div>
               <div className={styles.aiCtaDesc}>계약서 내용을 붙여넣으면 AI가 위험 조항을 자동으로 찾아드려요.</div>
             </div>
-            <Link href="/app-service?tab=ai" className={styles.aiCtaBtn}>AI 분석하기 →</Link>
+            <Link href="/ai" className={styles.aiCtaBtn}>AI 분석하기 →</Link>
           </div>
         </div>
       </main>

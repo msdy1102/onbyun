@@ -39,7 +39,7 @@ export default function AIAnalysisPage() {
 
   const handleAnalyze = async () => {
     if (!text.trim() && !file) { setError("계약서 내용을 입력하거나 파일을 업로드해주세요."); return; }
-    if (!isLoggedIn) { signIn("google"); return; }
+    if (!isLoggedIn) { signIn("google", { callbackUrl: "/ai" }); return; }
     setLoading(true);
     setError("");
     setResult(null);
@@ -96,7 +96,7 @@ export default function AIAnalysisPage() {
             </Link>
           )}
           {!isLoggedIn && (
-            <button onClick={() => signIn("google")} style={{
+            <button onClick={() => signIn("google", { callbackUrl: "/ai" })} style={{
               marginLeft: "auto", padding: "6px 16px", background: "#3C91E6", color: "#fff",
               border: "none", borderRadius: 20, fontSize: 13, fontWeight: 700,
               cursor: "pointer", fontFamily: "inherit",

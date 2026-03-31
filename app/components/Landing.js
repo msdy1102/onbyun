@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import "../landing.css";
 
 /* ──────────────────────────────────────────
    GNB
 ────────────────────────────────────────── */
-function GNB({ onLoginClick }) {
+function GNB() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated" && !!session?.user;
+  const isNewUser = session?.user?.isNewUser;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
@@ -28,7 +32,8 @@ function GNB({ onLoginClick }) {
         <nav className="hidden md:flex items-center gap-8">
           {[
             { label: "계약서 주의사항", href: "#contracts" },
-            { label: "정부지원 서류", href: "#gov" },
+            { label: "계산기", href: "/calc" },
+            { label: "정부지원", href: "/support" },
             { label: "AI 분석", href: "/ai" },
             { label: "요금제", href: "#pricing" },
           ].map((item) => (
@@ -44,18 +49,49 @@ function GNB({ onLoginClick }) {
 
         {/* CTA 영역 */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={onLoginClick}
-            className="hidden sm:block text-sm text-gray-600 hover:text-brand font-medium transition-colors"
-          >
-            로그인
-          </button>
-          <Link
-            href="/onboarding"
-            className="btn-primary inline-flex items-center gap-1 px-5 py-2.5 rounded-full text-sm font-bold shadow-sm"
-          >
-            지금 무료로 확인하기
-          </Link>
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/mypage"
+                className="hidden sm:flex items-center gap-2 text-sm text-gray-600 hover:text-brand font-medium transition-colors"
+              >
+                <img
+                  src={session?.user?.image || ""}
+                  alt="프로필"
+                  className="w-7 h-7 rounded-full border border-brand-border"
+                  onError={e => { e.target.style.display="none"; }}
+                />
+                {session?.user?.nickname || session?.user?.name?.split(" ")[0] || "마이페이지"}
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="hidden sm:block text-sm text-gray-400 hover:text-gray-600 font-medium transition-colors"
+              >
+                로그아웃
+              </button>
+              <Link
+                href="/ai"
+                className="btn-primary inline-flex items-center gap-1 px-5 py-2.5 rounded-full text-sm font-bold shadow-sm"
+              >
+                계약서 분석하기
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden sm:block text-sm text-gray-600 hover:text-brand font-medium transition-colors"
+              >
+                로그인
+              </Link>
+              <Link
+                href="/onboarding"
+                className="btn-primary inline-flex items-center gap-1 px-5 py-2.5 rounded-full text-sm font-bold shadow-sm"
+              >
+                지금 무료로 확인하기
+              </Link>
+            </>
+          )}
           {/* 모바일 햄버거 */}
           <button
             className="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100"
@@ -77,7 +113,8 @@ function GNB({ onLoginClick }) {
         <div className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4">
           {[
             { label: "계약서 주의사항", href: "#contracts" },
-            { label: "정부지원 서류", href: "#gov" },
+            { label: "계산기", href: "/calc" },
+            { label: "정부지원", href: "/support" },
             { label: "AI 분석", href: "/ai" },
             { label: "요금제", href: "#pricing" },
           ].map((item) => (
@@ -90,12 +127,27 @@ function GNB({ onLoginClick }) {
               {item.label}
             </a>
           ))}
-          <button
-            onClick={() => { setMenuOpen(false); onLoginClick(); }}
-            className="text-sm text-gray-600 text-left py-2"
-          >
-            로그인
-          </button>
+          {isLoggedIn ? (
+            <>
+              <Link href="/mypage" className="text-sm text-gray-700 font-medium py-2 border-b border-gray-50" onClick={() => setMenuOpen(false)}>
+                마이페이지
+              </Link>
+              <button
+                onClick={() => { setMenuOpen(false); signOut({ callbackUrl: "/" }); }}
+                className="text-sm text-gray-500 text-left py-2"
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm text-gray-600 text-left py-2"
+              onClick={() => setMenuOpen(false)}
+            >
+              로그인
+            </Link>
+          )}
         </div>
       )}
     </header>
@@ -105,7 +157,7 @@ function GNB({ onLoginClick }) {
 /* ──────────────────────────────────────────
    S1. 히어로
 ────────────────────────────────────────── */
-function HeroSection() {
+function HeroSection({ isLoggedIn }) {
   return (
     <section className="hero-bg pt-28 pb-20 md:pt-36 md:pb-28 px-4 sm:px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
@@ -132,10 +184,10 @@ function HeroSection() {
           {/* CTA 버튼 */}
           <div className="flex flex-col sm:flex-row items-center gap-3 justify-center lg:justify-start mb-8">
             <Link
-              href="/onboarding"
+              href={isLoggedIn ? "/ai" : "/onboarding"}
               className="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-base font-bold shadow-md"
             >
-              내 계약서 확인하기
+              {isLoggedIn ? "계약서 분석하기" : "내 계약서 확인하기"}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
@@ -906,7 +958,7 @@ function FAQSection() {
 /* ──────────────────────────────────────────
    S9. 최하단 CTA
 ────────────────────────────────────────── */
-function FinalCTA() {
+function FinalCTA({ isLoggedIn }) {
   return (
     <section className="cta-bg py-24 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto text-center">
@@ -924,10 +976,10 @@ function FinalCTA() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
           <Link
-            href="/onboarding"
+            href={isLoggedIn ? "/ai" : "/onboarding"}
             className="inline-flex items-center justify-center gap-2 bg-white text-brand font-extrabold px-10 py-4 rounded-full text-base hover:bg-gray-50 transition-all shadow-lg hover:-translate-y-0.5"
           >
-            내 계약서 분석하기
+            {isLoggedIn ? "계약서 분석하기" : "내 계약서 분석하기"}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
             </svg>
@@ -978,9 +1030,14 @@ function Footer() {
 
           {/* 링크 */}
           <div className="flex flex-wrap gap-6 text-sm">
-            {["이용약관", "개인정보처리방침", "서비스약관", "운영 정책"].map((l) => (
-              <Link key={l} href="/terms" className="hover:text-white transition-colors">
-                {l}
+            {[
+              { label: "이용약관", href: "/terms" },
+              { label: "개인정보처리방침", href: "/privacy" },
+              { label: "서비스약관", href: "/service-terms" },
+              { label: "운영 정책", href: "/policy" },
+            ].map((l) => (
+              <Link key={l.label} href={l.href} className="hover:text-white transition-colors">
+                {l.label}
               </Link>
             ))}
           </div>
@@ -997,12 +1054,14 @@ function Footer() {
 /* ──────────────────────────────────────────
    메인 Landing 컴포넌트
 ────────────────────────────────────────── */
-export default function Landing({ onLoginClick }) {
+export default function Landing() {
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === "authenticated" && !!session?.user;
   return (
     <div className="landing-root">
-      <GNB onLoginClick={onLoginClick || (() => {})} />
+      <GNB />
       <main>
-        <HeroSection />
+        <HeroSection isLoggedIn={isLoggedIn} />
         <ContractsSection />
         <ProblemSection />
         <HowItWorksSection />
@@ -1010,7 +1069,7 @@ export default function Landing({ onLoginClick }) {
         <FeaturesSection />
         <PricingSection />
         <FAQSection />
-        <FinalCTA />
+        <FinalCTA isLoggedIn={isLoggedIn} />
       </main>
       <Footer />
     </div>
