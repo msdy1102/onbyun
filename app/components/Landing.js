@@ -297,35 +297,35 @@ const CONTRACT_TYPES = [
     title: "근로계약서",
     desc: "수습 3개월간 급여를 20% 깎는 조항, 퇴직 후 2년간 경쟁사 입사를 막는 조항 — 서명 전 이 2가지만 확인해도 달라집니다.",
     tags: ["#포괄임금", "#수습 급여 삭감", "#경업금지"],
-    href: "/doc?id=labor",
+    href: "/doc/labor",
   },
   {
     icon: "🏠",
     title: "전세·임대차 계약서",
     desc: "근저당이 보증금보다 높으면 경매 시 한 푼도 못 받을 수 있습니다. 계약 전 등기부등본 1장으로 확인할 수 있는 것들을 알려드립니다.",
     tags: ["#근저당 초과", "#특약 조항", "#보증금 반환"],
-    href: "/doc?id=lease",
+    href: "/doc/lease",
   },
   {
     icon: "💻",
     title: "프리랜서 계약서",
     desc: "'작업물 저작권 전부 발주사 귀속' 조항은 국내 외주 계약의 70%에 들어있습니다. 서명 전 삭제 또는 수정 요청 가능한 조항을 알려드립니다.",
     tags: ["#IP 귀속", "#대금 지급 지연", "#무한 수정 요구"],
-    href: "/doc?id=freelance",
+    href: "/doc/freelance",
   },
   {
     icon: "☕",
     title: "알바 계약서",
     desc: "주 15시간 이상 일하면 주휴수당이 법으로 보장됩니다. 안 줘도 된다고 써있는 계약서는 그 조항 자체가 무효입니다.",
     tags: ["#주휴수당", "#최저임금", "#즉시 해고 통보"],
-    href: "/doc?id=alba",
+    href: "/doc/labor-15up-5up",
   },
   {
     icon: "🏢",
     title: "상가 임대차 계약서",
     desc: "최초 계약일로부터 10년간 계약갱신을 요구할 권리가 있습니다. 임대인이 거절할 수 있는 조건 6가지를 미리 파악하세요.",
     tags: ["#계약갱신 거절 조건", "#권리금 회수", "#임대료 5% 상한"],
-    href: "/doc?id=commercial",
+    href: "/doc/commercial-lease",
   },
   {
     icon: "📁",
@@ -393,21 +393,21 @@ function ContractsSection() {
 const REVIEWS_PROBLEM = [
   {
     quote: "입사 6개월 만에 야근이 주 4회로 늘었는데, 계약서에 '포괄임금제'가 적혀 있어서 추가 수당을 하나도 못 받았어요. 서명 전에 그 조항이 뭔지 알았더라면...",
-    name: "김민준",
+    name: "김○○",
     role: "직장인 1년차 · 서울",
     result: "월 40시간 초과근무 수당 0원",
     icon: "💼",
   },
   {
     quote: "3줄짜리 특약이 문제였어요. '임차인 귀책 사유 시 보증금에서 수리비 우선 공제' — 이 한 문장 때문에 보증금 1,800만 원 중 340만 원을 못 돌려받았습니다.",
-    name: "이수진",
+    name: "이○○",
     role: "직장인 29세 · 인천",
     result: "보증금 340만 원 미반환",
     icon: "🏠",
   },
   {
     quote: "3개월 작업한 브랜드 디자인인데, 계약서 제15조 한 줄로 포트폴리오에도 올릴 수 없게 됐어요. 클라이언트가 '업계 표준'이라고 해서 그냥 믿었는데.",
-    name: "박지호",
+    name: "박○○",
     role: "프리랜서 디자이너 3년차",
     result: "3개월 작업물 저작권 전부 상실",
     icon: "💻",
@@ -515,31 +515,23 @@ function HowItWorksSection() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row items-start gap-8 md:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {STEPS.map((step, i) => (
-            <div key={step.num} className="flex-1 flex flex-col md:flex-row">
-              <div className="flex md:flex-col items-start gap-4 md:items-center">
-                {/* 스텝 원 */}
-                <div className="flex-shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center mb-0 md:mb-3">
-                    {step.icon}
-                  </div>
-                </div>
-
-                {/* 연결선 (데스크탑) */}
-                {i < STEPS.length - 1 && (
-                  <div className="hidden md:block step-connector mt-0 mx-4 self-center" style={{ marginTop: "-3.5rem" }} />
-                )}
-
-                <div className="flex-1 md:text-center">
-                  <div className="text-brand font-black text-3xl mb-1 hidden md:block">{step.num}</div>
-                  <h3 className="font-bold text-gray-900 text-base mb-2">{step.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-3">{step.desc}</p>
-                  <span className="inline-block bg-brand-light text-brand text-xs font-semibold px-3 py-1 rounded-full">
-                    → {step.time}
-                  </span>
-                </div>
+            <div key={step.num} className="flex flex-col items-center text-center">
+              {/* 아이콘 */}
+              <div className="w-16 h-16 rounded-2xl bg-brand-light border border-brand-border flex items-center justify-center mb-4">
+                {step.icon}
               </div>
+              {/* 번호 */}
+              <div className="text-brand font-black text-4xl mb-2">{step.num}</div>
+              {/* 제목 */}
+              <h3 className="font-bold text-gray-900 text-base mb-3">{step.title}</h3>
+              {/* 설명 */}
+              <p className="text-gray-500 text-sm leading-relaxed mb-4">{step.desc}</p>
+              {/* 시간 뱃지 */}
+              <span className="inline-block bg-brand-light text-brand text-xs font-semibold px-3 py-1.5 rounded-full">
+                → {step.time}
+              </span>
             </div>
           ))}
         </div>
@@ -723,18 +715,79 @@ function FeaturesSection() {
                 ))}
               </ul>
 
-              {/* AI 분석 결과 UI 미리보기 */}
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-2 text-xs font-mono">
-                <div className="flex items-center justify-between text-gray-400 mb-2">
-                  <span>ANALYSIS.PROGRESS</span>
-                  <span className="text-brand font-bold">98%</span>
+              {/* AI 분석 결과 UI 미리보기 — 실제 결과 스타일 */}
+              <div className="rounded-xl overflow-hidden border border-gray-200">
+                {/* 결과 헤더 */}
+                <div className="bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs text-gray-400 mb-0.5">분석 완료 · 17초</div>
+                    <div className="text-sm font-bold text-gray-900">프리랜서 용역계약서</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-200">위험 3건</span>
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-50 text-green-600 border border-green-200">양호 2건</span>
+                  </div>
                 </div>
-                <div className="h-1.5 bg-gray-200 rounded-full mb-3">
-                  <div className="h-1.5 bg-brand rounded-full" style={{ width: "98%" }} />
+                {/* AI 한줄 평가 */}
+                <div className="bg-brand px-4 py-2.5 flex items-start gap-2">
+                  <span className="text-white text-xs mt-0.5">✦</span>
+                  <p className="text-white text-xs leading-relaxed font-medium">
+                    저작권 전면귀속·무제한수정·지연이자 미명시 — 3개 조항 수정 협의 없이 서명하면 작업물과 수익 모두 잃을 수 있습니다.
+                  </p>
                 </div>
-                <p className="text-brand">&gt; DETECTED: UNFAIR_TERMINATION_CLAUSE (Line 42)</p>
-                <p className="text-amber-500">&gt; DETECTED: MISSING_PAYMENT_SCHEDULE</p>
-                <p className="text-green-500">&gt; VERIFIED: CONTRACT_PERIOD_CLEAR</p>
+                {/* 결과 항목 */}
+                <div className="bg-white divide-y divide-gray-50">
+                  {/* 위험 1 */}
+                  <div className="px-4 py-3 bg-red-50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0"></span>
+                      <span className="text-red-600 text-xs font-bold">위험</span>
+                      <span className="text-gray-900 text-xs font-semibold">저작권 전면 귀속 (제15조)</span>
+                    </div>
+                    <p className="text-red-700 text-xs leading-relaxed pl-3.5">
+                      결과물 저작권이 계약 완료 즉시 갑에게 귀속됩니다. 포트폴리오 사용도 불가 — 을에게 매우 불리합니다.
+                    </p>
+                    <div className="mt-1.5 pl-3.5 text-xs text-red-500 font-medium">
+                      💡 "포트폴리오 목적 사용권을 을에게 유보한다" 문구 추가 요청하세요.
+                    </div>
+                  </div>
+                  {/* 위험 2 */}
+                  <div className="px-4 py-3 bg-amber-50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                      <span className="text-amber-700 text-xs font-bold">위험</span>
+                      <span className="text-gray-900 text-xs font-semibold">무제한 수정 요구 (제16조)</span>
+                    </div>
+                    <p className="text-amber-700 text-xs leading-relaxed pl-3.5">
+                      납품 후 30일 이내 수정 횟수 무제한 — 검수 기준 없이 을이 무한 수정에 묶일 수 있습니다.
+                    </p>
+                    <div className="mt-1.5 pl-3.5 text-xs text-amber-600 font-medium">
+                      💡 "수정은 2회 이내, 범위는 최초 요구사항 기준" 으로 명시 요청하세요.
+                    </div>
+                  </div>
+                  {/* 위험 3 */}
+                  <div className="px-4 py-3 bg-amber-50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0"></span>
+                      <span className="text-amber-700 text-xs font-bold">주의</span>
+                      <span className="text-gray-900 text-xs font-semibold">대금 지급 지연이자 미명시 (제17조)</span>
+                    </div>
+                    <p className="text-amber-700 text-xs leading-relaxed pl-3.5">
+                      지급 기한 60일 + 지연이자 없음 — 갑의 내부 검수가 길어지면 대금 지연 시 보상 수단이 없습니다.
+                    </p>
+                  </div>
+                  {/* 양호 */}
+                  <div className="px-4 py-3 bg-green-50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></span>
+                      <span className="text-green-700 text-xs font-bold">양호</span>
+                      <span className="text-gray-900 text-xs font-semibold">계약 기간 및 납품 일정 명확</span>
+                    </div>
+                    <p className="text-green-700 text-xs leading-relaxed pl-3.5">
+                      계약 기간, 납품 일정, 업무 범위가 명확하게 명시되어 있습니다.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
