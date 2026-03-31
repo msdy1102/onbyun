@@ -29,7 +29,7 @@ function GNB({ onLoginClick }) {
           {[
             { label: "계약서 주의사항", href: "#contracts" },
             { label: "정부지원 서류", href: "#gov" },
-            { label: "AI 분석", href: "#ai" },
+            { label: "AI 분석", href: "/ai" },
             { label: "요금제", href: "#pricing" },
           ].map((item) => (
             <a
@@ -78,7 +78,7 @@ function GNB({ onLoginClick }) {
           {[
             { label: "계약서 주의사항", href: "#contracts" },
             { label: "정부지원 서류", href: "#gov" },
-            { label: "AI 분석", href: "#ai" },
+            { label: "AI 분석", href: "/ai" },
             { label: "요금제", href: "#pricing" },
           ].map((item) => (
             <a

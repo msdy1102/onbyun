@@ -253,7 +253,7 @@ export default function MyPage() {
               </div>
             </div>
             {profile?.plan === "free" && (
-              <Link href="/?tab=home#pricing" className={styles.upgradeBtn}>업그레이드</Link>
+              <Link href="/#pricing" className={styles.upgradeBtn}>업그레이드</Link>
             )}
           </div>
         </div>

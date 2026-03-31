@@ -41,7 +41,7 @@
   white-space: nowrap;
 }
 .navBtn:hover { background: var(--bg-muted); color: var(--text-primary); }
-.navBtnActive { background: #eef2fd; color: var(--accent); }
+.navBtnActive { background: #e8f3fd; color: var(--accent); }
 
 /* Main */
 .main {
@@ -60,8 +60,8 @@
   font-weight: 600;
   letter-spacing: 0.5px;
   color: var(--accent);
-  background: #eef2fd;
-  border: 1px solid #c5d4f5;
+  background: #e8f3fd;
+  border: 1px solid #b3d4f5;
   padding: 4px 12px;
   border-radius: 20px;
   margin-bottom: 14px;
@@ -121,7 +121,7 @@
   transition: all 0.15s;
 }
 .card:hover { border-color: var(--border-dark); box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
-.cardOpen { border-color: var(--accent); box-shadow: 0 0 0 3px #c5d4f5; }
+.cardOpen { border-color: var(--accent); box-shadow: 0 0 0 3px #b3d4f5; }
 .cardBtn {
   width: 100%;
   padding: 1.25rem 1.5rem;
@@ -173,8 +173,8 @@
 .docBullet { color: var(--accent); font-size: 16px; line-height: 1; }
 .extLink {
   display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 500;
-  color: var(--accent); padding: 7px 14px; border: 1px solid #c5d4f5;
-  border-radius: var(--radius-sm); background: #eef2fd;
+  color: var(--accent); padding: 7px 14px; border: 1px solid #b3d4f5;
+  border-radius: var(--radius-sm); background: #e8f3fd;
   text-decoration: none; transition: all 0.15s;
 }
 .extLink:hover { background: var(--accent); color: #fff; text-decoration: none; }
@@ -195,7 +195,7 @@
   padding: 14px 16px; cursor: pointer; transition: all 0.15s;
 }
 .docCard:hover { border-color: var(--border-dark); }
-.docCardOpen { border-color: var(--accent); box-shadow: 0 0 0 2px #c5d4f5; }
+.docCardOpen { border-color: var(--accent); box-shadow: 0 0 0 2px #b3d4f5; }
 .docCardTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
 .docCardLabel { font-size: 13px; font-weight: 600; color: var(--text-primary); line-height: 1.4; margin-bottom: 3px; }
 .docCardCat { font-size: 11px; color: var(--accent); font-weight: 500; }
@@ -326,7 +326,7 @@
   justify-content: space-between;
   gap: 12px;
 }
-.mobileListItem.open { background: #eef2fd; }
+.mobileListItem.open { background: #e8f3fd; }
 .mobileListLeft { flex: 1; min-width: 0; }
 .mobileListLabel {
   font-size: 14px;
@@ -886,7 +886,7 @@
 }
 .homeSearchBox:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px #c5d4f5;
+  box-shadow: 0 0 0 4px #b3d4f5;
 }
 .searchDropdown {
   position: absolute;
@@ -970,7 +970,7 @@
   align-items: center;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
-  background: #eef2fd;
+  background: #e8f3fd;
 }
 .selectedDetailTitle {
   display: flex;
@@ -1610,7 +1610,7 @@ a.docCard .docCardCat { color: var(--accent); }
 .feedbackSubmitBtn:hover:not(:disabled) { background: var(--accent-dark); }
 .feedbackSubmitBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 .feedbackSuccess {
-  background: #eef2fd;
+  background: #e8f3fd;
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-xl);
   padding: 2.5rem; text-align: center;
@@ -1940,7 +1940,7 @@ a.docCard .docCardCat { color: var(--accent); }
   cursor: pointer;
   transition: all 0.15s;
 }
-.calcPreviewMore:hover { background: #eef2fd; }
+.calcPreviewMore:hover { background: #e8f3fd; }
 .calcPreviewGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2000,7 +2000,7 @@ a.docCard .docCardCat { color: var(--accent); }
   transition: all 0.15s;
 }
 .calcTabBtn:hover { background: var(--bg-muted); color: var(--text-primary); }
-.calcTabBtnActive { background: #eef2fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.calcTabBtnActive { background: #e8f3fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
 .calcCard {
   background: #fff;
@@ -2040,8 +2040,8 @@ a.docCard .docCardCat { color: var(--accent); }
 }
 .calcInput:focus { border-color: var(--accent); }
 .calcResultBox {
-  background: #eef2fd;
-  border: 1px solid #c5d4f5;
+  background: #e8f3fd;
+  border: 1px solid #b3d4f5;
   border-radius: var(--radius-lg);
   padding: 20px 22px;
   margin-bottom: 20px;
@@ -2139,7 +2139,7 @@ a.docCard .docCardCat { color: var(--accent); }
   transition: all 0.15s;
 }
 .supportSelectBtn:hover { background: var(--bg-muted); }
-.supportSelectBtnActive { background: #eef2fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.supportSelectBtnActive { background: #e8f3fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .supportSelectHint { font-size: 11px; color: var(--text-muted); }
 .supportTypeRow { display: flex; flex-direction: column; gap: 8px; }
 .supportTypeBtn {
@@ -2156,7 +2156,7 @@ a.docCard .docCardCat { color: var(--accent); }
   transition: all 0.15s;
 }
 .supportTypeBtn:hover { background: var(--bg-muted); }
-.supportTypeBtnActive { background: #eef2fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.supportTypeBtnActive { background: #e8f3fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
 .supportRunBtn {
   width: 100%;
   padding: 14px;
@@ -2211,7 +2211,7 @@ a.docCard .docCardCat { color: var(--accent); }
   transition: all 0.15s;
   flex-shrink: 0;
 }
-.supportResultItemLink:hover { background: #eef2fd; }
+.supportResultItemLink:hover { background: #e8f3fd; }
 .supportEmpty { font-size: 14px; color: var(--text-muted); padding: 20px 0; }
 .supportResetBtn {
   background: none;
@@ -2340,7 +2340,7 @@ a.docCard .docCardCat { color: var(--accent); }
   font-size: 11px;
   font-weight: 500;
   color: var(--accent);
-  background: #eef2fd;
+  background: #e8f3fd;
   border-radius: 4px;
   padding: 1px 6px;
   margin-left: 4px;
@@ -2427,7 +2427,7 @@ a.docCard .docCardCat { color: var(--accent); }
   transition: all 0.15s;
 }
 .calcRadioBtn:hover { background: var(--bg-muted); }
-.calcRadioBtnActive { background: #eef2fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.calcRadioBtnActive { background: #e8f3fd; border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
 /* ═══════════════════════════════════════════════
    정부지원 — 분위 버튼 금액 표시
@@ -2880,7 +2880,7 @@ a.docCard .docCardCat { color: var(--accent); }
     top: 0;
     bottom: 0;
     width: 32px;
-    background: linear-gradient(to left, var(--bg-page, #f5f5f3), transparent);
+    background: linear-gradient(to left, var(--bg-page, #FAFFFD), transparent);
     pointer-events: none;
   }
 }
@@ -2921,8 +2921,8 @@ a.docCard .docCardCat { color: var(--accent); }
   font-size: 12px;
   font-weight: 600;
   color: var(--accent);
-  background: #eef2fd;
-  border: 1px solid #c5d4f5;
+  background: #e8f3fd;
+  border: 1px solid #b3d4f5;
   border-radius: 20px;
   padding: 3px 12px;
   white-space: nowrap;
@@ -3194,7 +3194,7 @@ a.docCard .docCardCat { color: var(--accent); }
   transition: all 0.15s;
   margin-top: 8px;
 }
-.aiShareBtn:hover { border-color: var(--accent); color: var(--accent); background: #eef2fd; }
+.aiShareBtn:hover { border-color: var(--accent); color: var(--accent); background: #e8f3fd; }
 
 /* ═══════════════════════════════════════════════
    문서 카드 북마크
@@ -3335,7 +3335,7 @@ a.docCard .docCardCat { color: var(--accent); }
   min-height: 56px;
 }
 .mobileListItem:last-child { border-bottom: none; }
-.mobileListItem:active { background: #f5f7fe; }
+.mobileListItem:active { background: #e8f3fd; }
 
 .mobileListLink {
   flex: 1;
@@ -3414,7 +3414,7 @@ a.docCard .docCardCat { color: var(--accent); }
   padding: 9px 20px;
   border-radius: 20px;
   border: 1.5px solid var(--accent);
-  background: #eef2fd;
+  background: #e8f3fd;
   color: var(--accent);
   font-family: inherit;
   font-size: 13px;
@@ -3428,7 +3428,7 @@ a.docCard .docCardCat { color: var(--accent); }
     position: sticky;
     top: 50px; /* 헤더 높이 */
     z-index: 10;
-    background: var(--bg-page, #f5f5f3);
+    background: var(--bg-page, #FAFFFD);
     padding: 8px 14px 8px;
     border-bottom: 1px solid var(--border);
   }

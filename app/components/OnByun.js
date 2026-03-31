@@ -11,11 +11,11 @@ import styles from "./OnByun.module.css";
 const LEVEL_CONFIG = {
   danger: { label: "위험", bg: "#fff1f1", border: "#ffcccc", text: "#c00000", dot: "#e03535" },
   warn:   { label: "주의", bg: "#fffbee", border: "#ffe5a0", text: "#7a5000", dot: "#d08600" },
-  info:   { label: "확인", bg: "#eef2fd", border: "#c5d4f5", text: "#2d5bbf", dot: "#5385E4" },
+  info:   { label: "확인", bg: "#e8f3fd", border: "#b3d4f5", text: "#1e5fa8", dot: "#3C91E6" },
 };
 
 const TAG_COLORS = {
-  blue:   { bg: "#eef2fd", text: "#2d5bbf", border: "#c5d4f5" },
+  blue:   { bg: "#e8f3fd", text: "#1e5fa8", border: "#b3d4f5" },
   green:  { bg: "#f5f5f5", text: "#555555", border: "#C3C3C3" },
   purple: { bg: "#f5f5f5", text: "#555555", border: "#C3C3C3" },
   orange: { bg: "#f5f5f5", text: "#555555", border: "#C3C3C3" },
@@ -656,7 +656,7 @@ export default function OnByun() {
 
   const typeLabel = { contract: "계약서", application: "신청서류", list: "문서목록" };
   const typeColor = {
-    contract:    { bg: "#eef2fd", text: "#2d5bbf" },
+    contract:    { bg: "#e8f3fd", text: "#1e5fa8" },
     application: { bg: "#f5f5f5", text: "#555555" },
     list:        { bg: "#f5f5f5", text: "#555555" },
   };
@@ -1422,8 +1422,8 @@ export default function OnByun() {
                       <div className={styles.aiSampleBarTrack}><div className={styles.aiSampleBarFill} /></div>
                     </div>
                     <div className={styles.aiSampleItems}>
-                      <div className={styles.aiSampleItem} style={{ background: "#eef2fd", borderColor: "#c5d4f5" }}>
-                        <div className={styles.aiSampleItemHeader}><span className={styles.aiSampleDot} style={{ background: "#5385E4" }} /><span style={{ color: "#2d5bbf", fontSize: 10, fontWeight: 700 }}>확인</span><span className={styles.aiSampleItemTitle}>계약 기간</span></div>
+                      <div className={styles.aiSampleItem} style={{ background: "#e8f3fd", borderColor: "#b3d4f5" }}>
+                        <div className={styles.aiSampleItemHeader}><span className={styles.aiSampleDot} style={{ background: "#3C91E6" }} /><span style={{ color: "#1e5fa8", fontSize: 10, fontWeight: 700 }}>확인</span><span className={styles.aiSampleItemTitle}>계약 기간</span></div>
                         <div className={styles.aiSampleItemDesc}>1년, 자동 갱신 없음. 계약 만료 1개월 전 갱신 협의 필요.</div>
                       </div>
                       <div className={styles.aiSampleItem} style={{ background: "#fffbee", borderColor: "#ffe5a0" }}>
@@ -1480,7 +1480,7 @@ export default function OnByun() {
                               safe:    { label: "안전", color: "#2a9d5c", bg: "#edf7ef", border: "#b7dfc0" },
                               caution: { label: "주의", color: "#d08600", bg: "#fff8e8", border: "#f0d68a" },
                               danger:  { label: "위험", color: "#e03535", bg: "#fff1f1", border: "#ffcccc" },
-                            }[item.risk] || { label: "확인", color: "#5385E4", bg: "#eef2fd", border: "#c5d4f5" };
+                            }[item.risk] || { label: "확인", color: "#3C91E6", bg: "#e8f3fd", border: "#b3d4f5" };
                             const date = new Date(item.created_at);
                             const dateStr = `${date.getMonth()+1}/${date.getDate()} ${String(date.getHours()).padStart(2,"0")}:${String(date.getMinutes()).padStart(2,"0")}`;
                             return (

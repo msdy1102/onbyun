@@ -1,18 +1,23 @@
-/* app/terms/terms.module.css — 약관 페이지 공통 스타일 */
+/* ══════════════════════════════════════════
+   약관/정책 페이지 — 온변 디자인 시스템 v3
+   브랜드: #3C91E6 / 배경: #FAFFFD
+   Pretendard 폰트
+══════════════════════════════════════════ */
 
 .wrap {
   min-height: 100vh;
-  background: #f7f8fa;
-  font-family: 'Noto Sans KR', sans-serif;
+  background: #f0f7ff;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* ── 헤더 ── */
 .header {
   background: #fff;
-  border-bottom: 1px solid #e8eaed;
+  border-bottom: 1px solid #e8f0fb;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 1px 0 rgba(60,145,230,0.06);
 }
 .headerInner {
   max-width: 1100px;
@@ -26,33 +31,43 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   text-decoration: none;
   color: inherit;
 }
 .brandMark {
-  font-size: 16px;
-  font-weight: 800;
-  color: #3B5BDB;
-  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  background: #3C91E6;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 700;
+}
+.brandName {
+  font-size: 16px; font-weight: 700; color: #0f172a;
+  letter-spacing: -0.3px;
 }
 .brandSub {
   font-size: 12px;
-  color: #868e96;
+  color: #94a3b8;
 }
 .headerBack {
   margin-left: auto;
   font-size: 13px;
-  color: #3B5BDB;
+  color: #3C91E6;
   background: none;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 600;
   transition: background 0.15s;
+  font-family: 'Pretendard', sans-serif;
 }
-.headerBack:hover { background: #f1f3f5; }
+.headerBack:hover { background: #e8f3fd; }
 
 /* ── 레이아웃 ── */
 .container {
@@ -64,7 +79,7 @@
   align-items: flex-start;
 }
 
-/* ── 좌측 사이드 네비게이션 ── */
+/* ── 좌측 사이드 네비 ── */
 .sidebar {
   width: 220px;
   flex-shrink: 0;
@@ -74,8 +89,8 @@
 .sidebarTitle {
   font-size: 11px;
   font-weight: 700;
-  color: #adb5bd;
-  letter-spacing: 0.5px;
+  color: #94a3b8;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   margin-bottom: 12px;
   padding: 0 8px;
@@ -90,28 +105,29 @@
 }
 .navItem a {
   display: block;
-  padding: 8px 12px;
+  padding: 9px 12px;
   font-size: 14px;
-  color: #495057;
+  color: #475569;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: all 0.15s;
   border-left: 3px solid transparent;
+  font-weight: 500;
 }
 .navItem a:hover {
-  background: #f1f3f5;
-  color: #3B5BDB;
+  background: #e8f3fd;
+  color: #3C91E6;
 }
 .navItem.active a {
-  background: #eef2ff;
-  color: #3B5BDB;
-  font-weight: 600;
-  border-left-color: #3B5BDB;
+  background: #e8f3fd;
+  color: #3C91E6;
+  font-weight: 700;
+  border-left-color: #3C91E6;
 }
 .navDivider {
   height: 1px;
-  background: #e9ecef;
-  margin: 8px 0;
+  background: #b3d4f5;
+  margin: 8px 4px;
 }
 
 /* ── 본문 ── */
@@ -119,41 +135,43 @@
   flex: 1;
   min-width: 0;
   background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e9ecef;
+  border-radius: 16px;
+  border: 1px solid #e8f3fd;
   padding: 40px 48px;
+  box-shadow: 0 2px 12px rgba(60,145,230,0.06);
 }
 .pageTitle {
   font-size: 24px;
   font-weight: 800;
-  color: #212529;
+  color: #0f172a;
   margin: 0 0 8px;
   letter-spacing: -0.5px;
 }
 .updateDate {
   font-size: 13px;
-  color: #868e96;
-  margin: 0 0 32px;
+  color: #94a3b8;
+  margin: 0 0 24px;
 }
 .effectiveDate {
   display: inline-block;
-  background: #eef2ff;
-  color: #3B5BDB;
+  background: #e8f3fd;
+  color: #3C91E6;
   font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
+  font-weight: 700;
+  padding: 4px 12px;
   border-radius: 20px;
   margin-bottom: 32px;
+  border: 1px solid #b3d4f5;
 }
 
 /* ── 본문 타이포그래피 ── */
 .content h2 {
   font-size: 18px;
   font-weight: 700;
-  color: #212529;
+  color: #0f172a;
   margin: 40px 0 16px;
   padding-top: 40px;
-  border-top: 1px solid #f1f3f5;
+  border-top: 1px solid #f0f7ff;
 }
 .content h2:first-of-type {
   margin-top: 0;
@@ -163,13 +181,13 @@
 .content h3 {
   font-size: 15px;
   font-weight: 700;
-  color: #343a40;
+  color: #1e3a5f;
   margin: 24px 0 10px;
 }
 .content p {
   font-size: 14px;
   line-height: 1.8;
-  color: #495057;
+  color: #475569;
   margin: 0 0 12px;
 }
 .content ol, .content ul {
@@ -179,7 +197,7 @@
 .content li {
   font-size: 14px;
   line-height: 1.8;
-  color: #495057;
+  color: #475569;
   margin-bottom: 4px;
 }
 .content ol ol {
@@ -188,31 +206,29 @@
 }
 .content strong {
   font-weight: 700;
-  color: #212529;
+  color: #0f172a;
 }
 
 .infoBox {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
+  background: #f0f7ff;
+  border: 1px solid #b3d4f5;
+  border-radius: 10px;
   padding: 16px 20px;
   margin: 16px 0;
   font-size: 13px;
-  color: #495057;
+  color: #334155;
   line-height: 1.7;
 }
-.infoBox strong {
-  color: #212529;
-}
+.infoBox strong { color: #0f172a; }
 
 .highlight {
-  background: #fff3cd;
-  border-left: 3px solid #ffc107;
+  background: #fffbeb;
+  border-left: 3px solid #f59e0b;
   padding: 12px 16px;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 8px 8px 0;
   margin: 16px 0;
   font-size: 13px;
-  color: #664d03;
+  color: #78350f;
   line-height: 1.7;
 }
 
@@ -232,6 +248,7 @@
   .navDivider { display: none; }
   .content {
     padding: 24px 20px;
+    border-radius: 12px;
   }
   .pageTitle { font-size: 20px; }
 }

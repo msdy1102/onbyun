@@ -406,15 +406,15 @@ export default function DocPage({ data }) {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.brand}>
-            <span className={styles.brandMark}>온변</span>
+            <span className={styles.brandMark}>온</span>
             <span className={styles.brandFull}>온라인 변호사</span>
           </Link>
           <nav className={styles.nav}>
             <Link href="/" className={styles.navBtn}>홈</Link>
-            <Link href="/?tab=list" className={styles.navBtn}>전체 문서</Link>
-            <Link href="/?tab=calc" className={styles.navBtn}>계산기</Link>
-            <Link href="/?tab=support" className={styles.navBtn}>정부지원</Link>
-            <Link href="/?tab=ai" className={styles.navBtn}>AI 분석</Link>
+            <Link href="/app-service?tab=list" className={styles.navBtn}>전체 문서</Link>
+            <Link href="/app-service?tab=calc" className={styles.navBtn}>계산기</Link>
+            <Link href="/app-service?tab=support" className={styles.navBtn}>정부지원</Link>
+            <Link href="/app-service?tab=ai" className={styles.navBtn}>AI 분석</Link>
           </nav>
         </div>
       </header>
@@ -424,7 +424,7 @@ export default function DocPage({ data }) {
         <nav className={styles.breadcrumb}>
           <Link href="/" className={styles.breadcrumbLink}>홈</Link>
           <span className={styles.breadcrumbSep}>›</span>
-          <Link href="/?tab=list" className={styles.breadcrumbLink}>전체 문서 목록</Link>
+          <Link href="/app-service?tab=list" className={styles.breadcrumbLink}>전체 문서 목록</Link>
           {category && (
             <>
               <span className={styles.breadcrumbSep}>›</span>
@@ -588,7 +588,7 @@ export default function DocPage({ data }) {
               <div className={styles.aiCtaTitle}>🤖 실제 계약서를 분석하고 싶으신가요?</div>
               <div className={styles.aiCtaDesc}>계약서 내용을 붙여넣으면 AI가 위험 조항을 자동으로 찾아드려요.</div>
             </div>
-            <Link href="/?tab=ai" className={styles.aiCtaBtn}>AI 분석하기 →</Link>
+            <Link href="/app-service?tab=ai" className={styles.aiCtaBtn}>AI 분석하기 →</Link>
           </div>
         </div>
       </main>
@@ -596,8 +596,8 @@ export default function DocPage({ data }) {
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
           <div className={styles.footerBrand}>
-            <span className={styles.brandMark} style={{ fontSize: 14 }}>온변</span>
-            <span style={{ fontSize: 12, color: "#999", marginLeft: 8 }}>온라인 변호사</span>
+            <span className={styles.brandMark}>온</span>
+            <span style={{ fontSize: 13, color: "#94a3b8", marginLeft: 8 }}>온라인 변호사</span>
           </div>
           <p className={styles.footerDisc}>본 사이트의 모든 정보는 참고용이며 법적 효력이 없습니다.</p>
           <p className={styles.footerCopy}>© 2025 온변. All rights reserved.</p>

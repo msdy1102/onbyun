@@ -16,7 +16,8 @@ export default function TermsLayout({ children, current }) {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.brand}>
-            <span className={styles.brandMark}>온변</span>
+            <span className={styles.brandMark}>온</span>
+            <span className={styles.brandName}>온변</span>
             <span className={styles.brandSub}>온라인 변호사</span>
           </Link>
           <Link href="/" className={styles.headerBack}>← 서비스로 돌아가기</Link>

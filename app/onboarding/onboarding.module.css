@@ -1,19 +1,48 @@
-.page { min-height: 100vh; background: #f7f7f5; display: flex; flex-direction: column; }
+/* ══════════════════════════════════════════
+   온보딩 — 온변 디자인 시스템 v3
+   브랜드: #3C91E6 / 배경: #FAFFFD
+   Pretendard 폰트
+══════════════════════════════════════════ */
 
-/* 헤더 */
+.page {
+  min-height: 100vh;
+  background: #f0f7ff;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── 헤더 ── */
 .header {
   background: #fff;
-  border-bottom: 1px solid #e8e8e3;
+  border-bottom: 1px solid #e8f0fb;
   padding: 0 1.5rem;
   height: 56px;
   display: flex;
   align-items: center;
+  box-shadow: 0 1px 0 rgba(60,145,230,0.06);
 }
-.brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.brandMark { font-size: 18px; font-weight: 700; color: #5385E4; letter-spacing: -0.5px; }
-.brandSub { font-size: 12px; color: #aaa; }
+.brand {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none;
+}
+.brandMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  background: #3C91E6;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 700;
+}
+.brandName {
+  font-size: 17px; font-weight: 700; color: #0f172a;
+  letter-spacing: -0.3px;
+}
+.brandSub { font-size: 12px; color: #94a3b8; }
 
-/* 메인 */
+/* ── 메인 ── */
 .main {
   flex: 1;
   display: flex;
@@ -25,15 +54,17 @@
 .card {
   background: #fff;
   border-radius: 20px;
-  border: 1px solid #e8e8e3;
+  border: 1px solid #e8f3fd;
   padding: 2.5rem 2.25rem;
   width: 100%;
   max-width: 480px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 24px rgba(60,145,230,0.1);
 }
-@media (max-width: 520px) { .card { padding: 1.75rem 1.25rem; border-radius: 16px; } }
+@media (max-width: 520px) {
+  .card { padding: 1.75rem 1.25rem; border-radius: 16px; }
+}
 
-/* 진행 단계 */
+/* ── 진행 단계 ── */
 .progress {
   display: flex;
   align-items: center;
@@ -45,106 +76,126 @@
 .progressDot {
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: #e8e8e3;
-  color: #aaa;
+  background: #e2e8f0;
+  color: #94a3b8;
   font-size: 13px;
   font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   transition: all 0.2s;
 }
-.progressDotActive { background: #5385E4; color: #fff; }
-.progressDotDone { background: #2a9d5c; color: #fff; }
-.progressLabel { font-size: 12px; color: #aaa; margin: 0 8px; font-weight: 500; }
-.progressLabelActive { color: #5385E4; }
-.progressLine { width: 40px; height: 2px; background: #e8e8e3; margin: 0 4px; }
-.progressLineDone { background: #2a9d5c; }
+.progressDotActive { background: #3C91E6; color: #fff; }
+.progressDotDone { background: #10b981; color: #fff; }
+.progressLabel {
+  font-size: 12px; color: #94a3b8; margin: 0 8px; font-weight: 500;
+}
+.progressLabelActive { color: #3C91E6; font-weight: 600; }
+.progressLine { width: 40px; height: 2px; background: #e2e8f0; margin: 0 4px; }
+.progressLineDone { background: #10b981; }
 
-/* 스텝 공통 */
+/* ── 스텝 공통 ── */
 .stepBody { display: flex; flex-direction: column; gap: 0; }
 
-/* 웰컴 */
+/* ── 웰컴 ── */
 .welcome {
   display: flex; align-items: center; gap: 12px;
   margin-bottom: 1.5rem;
   padding: 14px 16px;
-  background: #f5f7fe;
+  background: #e8f3fd;
   border-radius: 12px;
-  border: 1px solid #dde6fb;
+  border: 1px solid #b3d4f5;
 }
 .avatar {
   width: 44px; height: 44px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  border: 2px solid #c5d4f5;
+  border: 2px solid #3C91E6;
 }
 .welcomeText { display: flex; flex-direction: column; gap: 2px; }
-.welcomeName { font-size: 15px; font-weight: 700; color: #111; }
-.welcomeSub { font-size: 13px; color: #5385E4; font-weight: 500; }
+.welcomeName { font-size: 15px; font-weight: 700; color: #0f172a; }
+.welcomeSub { font-size: 13px; color: #3C91E6; font-weight: 500; }
 
-.stepTitle { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 6px; letter-spacing: -0.3px; }
-.stepDesc { font-size: 14px; color: #666; margin-bottom: 1.5rem; line-height: 1.6; }
+.stepTitle {
+  font-size: 20px; font-weight: 700; color: #0f172a;
+  margin-bottom: 6px; letter-spacing: -0.3px;
+}
+.stepDesc {
+  font-size: 14px; color: #64748b; margin-bottom: 1.5rem; line-height: 1.6;
+}
 
-/* 필드 */
+/* ── 필드 ── */
 .fieldGroup { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.25rem; }
-.label { font-size: 13px; font-weight: 600; color: #333; }
-.required { color: #e03535; margin-left: 2px; }
+.label { font-size: 13px; font-weight: 600; color: #334155; }
+.required { color: #ef4444; margin-left: 2px; }
 .inputWrap { position: relative; }
 .input {
-  width: 100%; padding: 11px 44px 11px 14px;
-  border: 1.5px solid #e8e8e3; border-radius: 10px;
-  font-size: 15px; font-family: inherit; color: #111;
-  outline: none; transition: border-color 0.15s;
+  width: 100%; padding: 12px 44px 12px 14px;
+  border: 1.5px solid #b3d4f5; border-radius: 10px;
+  font-size: 15px; font-family: 'Pretendard', sans-serif; color: #0f172a;
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s;
   box-sizing: border-box;
+  background: #FAFFFD;
 }
-.input:focus { border-color: #5385E4; }
-.inputError { border-color: #e03535; }
+.input:focus {
+  border-color: #3C91E6;
+  box-shadow: 0 0 0 3px rgba(60,145,230,0.12);
+}
+.inputError { border-color: #ef4444; }
 .charCount {
   position: absolute; right: 12px; top: 50%;
   transform: translateY(-50%);
-  font-size: 11px; color: #aaa;
+  font-size: 11px; color: #94a3b8;
 }
-.errorMsg { font-size: 12px; color: #e03535; padding-left: 2px; }
+.errorMsg { font-size: 12px; color: #ef4444; padding-left: 2px; }
 
-/* 닉네임 추천 */
+/* ── 닉네임 추천 ── */
 .suggestions { margin-bottom: 1.5rem; }
-.suggestLabel { font-size: 12px; color: #aaa; font-weight: 500; display: block; margin-bottom: 8px; }
+.suggestLabel {
+  font-size: 12px; color: #94a3b8; font-weight: 500;
+  display: block; margin-bottom: 8px;
+}
 .suggestRow { display: flex; flex-wrap: wrap; gap: 8px; }
 .suggestBtn {
   padding: 6px 14px; border-radius: 20px;
-  border: 1px solid #e8e8e3; background: #f7f7f5;
-  font-family: inherit; font-size: 13px; color: #555;
-  cursor: pointer; transition: all 0.15s;
+  border: 1.5px solid #b3d4f5; background: #e8f3fd;
+  font-family: 'Pretendard', sans-serif; font-size: 13px; color: #3C91E6;
+  cursor: pointer; font-weight: 500;
+  transition: all 0.15s;
 }
-.suggestBtn:hover { border-color: #5385E4; color: #5385E4; background: #f0f4fe; }
+.suggestBtn:hover {
+  border-color: #3C91E6; background: #3C91E6; color: #fff;
+}
 
-/* 섹션 블록 */
+/* ── 섹션 블록 ── */
 .sectionBlock {
-  border: 1px solid #e8e8e3; border-radius: 12px;
+  border: 1.5px solid #b3d4f5; border-radius: 12px;
   padding: 16px 18px; margin-bottom: 14px;
   display: flex; flex-direction: column; gap: 0;
+  background: #FAFFFD;
 }
-.sectionBlockTitle { font-size: 13px; font-weight: 700; color: #333; margin-bottom: 14px; }
+.sectionBlockTitle {
+  font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 14px;
+}
 
-/* 토글 */
+/* ── 토글 ── */
 .toggleRow {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: 12px; padding: 10px 0; cursor: pointer;
-  border-top: 1px solid #f0f0ee;
+  border-top: 1px solid #e8f3fd;
 }
 .toggleRow:first-of-type { border-top: none; }
 .toggleInfo { display: flex; flex-direction: column; gap: 3px; flex: 1; }
-.toggleLabel { font-size: 14px; font-weight: 600; color: #111; }
-.toggleDesc { font-size: 12px; color: #888; line-height: 1.5; }
-.optional { font-size: 11px; color: #aaa; font-weight: 400; }
+.toggleLabel { font-size: 14px; font-weight: 600; color: #0f172a; }
+.toggleDesc { font-size: 12px; color: #64748b; line-height: 1.5; }
+.optional { font-size: 11px; color: #94a3b8; font-weight: 400; }
 .toggle {
   width: 42px; height: 24px; border-radius: 12px;
-  background: #d8d8d5; position: relative;
+  background: #cbd5e1; position: relative;
   cursor: pointer; flex-shrink: 0;
   transition: background 0.2s; margin-top: 2px;
 }
-.toggleOn { background: #5385E4; }
+.toggleOn { background: #3C91E6; }
 .toggleThumb {
   position: absolute; top: 3px; left: 3px;
   width: 18px; height: 18px; border-radius: 50%;
@@ -153,84 +204,111 @@
 }
 .toggleOn .toggleThumb { transform: translateX(18px); }
 
-/* 체크박스 */
+/* ── 체크박스 ── */
 .checkRow {
   display: flex; align-items: center; gap: 10px;
-  padding: 10px 0; cursor: pointer; border-top: 1px solid #f0f0ee;
+  padding: 10px 0; cursor: pointer;
+  border-top: 1px solid #e8f3fd;
 }
 .checkRowAll { border-top: none; }
-.checkDivider { height: 1px; background: #e8e8e3; margin: 2px 0 4px; }
+.checkDivider { height: 1px; background: #b3d4f5; margin: 4px 0; }
 .checkbox {
   width: 20px; height: 20px; border-radius: 6px;
-  border: 1.5px solid #d0d0cc; background: #fff;
+  border: 1.5px solid #b3d4f5; background: #fff;
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 700; color: #fff;
   flex-shrink: 0; transition: all 0.15s;
 }
-.checkboxOn { background: #5385E4; border-color: #5385E4; }
-.checkLabel { font-size: 14px; color: #333; flex: 1; }
+.checkboxOn { background: #3C91E6; border-color: #3C91E6; }
+.checkLabel { font-size: 14px; color: #334155; flex: 1; }
 .checkLink {
-  font-size: 12px; color: #5385E4; text-decoration: none;
-  padding: 2px 8px; border: 1px solid #c5d4f5; border-radius: 6px;
+  font-size: 12px; color: #3C91E6; text-decoration: none;
+  padding: 2px 8px; border: 1.5px solid #b3d4f5; border-radius: 6px;
   white-space: nowrap; flex-shrink: 0;
+  transition: all 0.15s;
 }
-.checkLink:hover { background: #eef2fd; }
+.checkLink:hover { background: #e8f3fd; border-color: #3C91E6; }
 
-/* 버튼 */
+/* ── 버튼 ── */
 .nextBtn {
   width: 100%; padding: 14px;
-  background: #5385E4; color: #fff;
+  background: #3C91E6; color: #fff;
   border: none; border-radius: 12px;
-  font-family: inherit; font-size: 16px; font-weight: 700;
-  cursor: pointer; transition: background 0.15s;
+  font-family: 'Pretendard', sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
   margin-top: 4px;
 }
-.nextBtn:hover { background: #3d6fd4; }
-.nextBtnDisabled { background: #bbb; cursor: not-allowed; }
-.nextBtnDisabled:hover { background: #bbb; }
+.nextBtn:hover {
+  background: #2a7ad4;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(60,145,230,0.3);
+}
+.nextBtnDisabled {
+  background: #94a3b8; cursor: not-allowed;
+  transform: none; box-shadow: none;
+}
+.nextBtnDisabled:hover {
+  background: #94a3b8;
+  transform: none; box-shadow: none;
+}
 .btnRow { display: flex; gap: 10px; margin-top: 4px; }
 .backBtn {
-  padding: 14px 20px; background: #f5f5f3;
-  border: 1px solid #e8e8e3; border-radius: 12px;
-  font-family: inherit; font-size: 14px; font-weight: 600; color: #555;
+  padding: 14px 20px; background: #e8f3fd;
+  border: 1.5px solid #b3d4f5; border-radius: 12px;
+  font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: 600; color: #3C91E6;
   cursor: pointer; transition: all 0.15s; flex-shrink: 0;
 }
-.backBtn:hover { background: #eee; }
+.backBtn:hover { background: #b3d4f5; }
 .btnRow .nextBtn { flex: 1; margin-top: 0; }
 
-/* 완료 화면 */
+/* ── 완료 화면 ── */
 .doneBody {
   display: flex; flex-direction: column; align-items: center;
   text-align: center; padding: 1rem 0 0.5rem;
 }
 .doneIcon { font-size: 52px; margin-bottom: 1rem; }
-.doneTitle { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 10px; letter-spacing: -0.3px; }
-.doneDesc { font-size: 14px; color: #666; line-height: 1.7; margin-bottom: 1.5rem; }
+.doneTitle {
+  font-size: 22px; font-weight: 700; color: #0f172a;
+  margin-bottom: 10px; letter-spacing: -0.3px;
+}
+.doneDesc {
+  font-size: 14px; color: #64748b; line-height: 1.7; margin-bottom: 1.5rem;
+}
 .doneFeatures {
-  width: 100%; background: #f5f7fe; border-radius: 12px;
-  border: 1px solid #dde6fb; padding: 16px 20px;
+  width: 100%; background: #e8f3fd; border-radius: 12px;
+  border: 1.5px solid #b3d4f5; padding: 16px 20px;
   display: flex; flex-direction: column; gap: 10px;
   margin-bottom: 1.75rem;
 }
 .doneFeatureItem {
   display: flex; align-items: center; gap: 10px;
-  font-size: 14px; font-weight: 500; color: #333; text-align: left;
+  font-size: 14px; font-weight: 500; color: #334155; text-align: left;
 }
 .doneFeatureItem span { font-size: 18px; }
 .startBtn {
   display: block; width: 100%; padding: 14px;
-  background: #5385E4; color: #fff; text-align: center;
+  background: #3C91E6; color: #fff; text-align: center;
   border-radius: 12px; text-decoration: none;
-  font-size: 16px; font-weight: 700; transition: background 0.15s;
+  font-size: 16px; font-weight: 700;
+  transition: all 0.15s;
 }
-.startBtn:hover { background: #3d6fd4; }
+.startBtn:hover {
+  background: #2a7ad4;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(60,145,230,0.3);
+}
 
-/* 로딩 */
-.loadingWrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+/* ── 로딩 ── */
+.loadingWrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #FAFFFD;
+}
 .loadingSpinner {
   width: 36px; height: 36px;
-  border: 3px solid #e8e8e3;
-  border-top-color: #5385E4;
+  border: 3px solid #b3d4f5;
+  border-top-color: #3C91E6;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

@@ -1,3 +1,5 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,10 +8,10 @@
 
 :root {
   /* ── 메인 컬러 #5385E4 ── */
-  --accent:        #5385E4;
-  --accent-dark:   #3a6ad4;       /* hover */
-  --accent-light:  #eef2fd;       /* 연한 배경 */
-  --accent-border: #c5d4f5;       /* 테두리 */
+  --accent:        #3C91E6;
+  --accent-dark:   #2a7ad4;       /* hover */
+  --accent-light:  #e8f3fd;       /* 연한 배경 */
+  --accent-border: #b3d4f5;       /* 테두리 */
 
   /* ── 서브 컬러 #C3C3C3 ── */
   --sub:           #C3C3C3;
@@ -17,9 +19,9 @@
   --sub-light:     #f5f5f5;
 
   /* ── 배경 / 카드 ── */
-  --bg:            #ffffff;
+  --bg:            #FAFFFD;
   --bg-card:       #ffffff;
-  --bg-muted:      #f8f8f8;
+  --bg-muted:      #f0f7ff;
 
   /* ── 테두리 ── */
   --border:        #e8e8e8;
