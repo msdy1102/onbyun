@@ -34,6 +34,12 @@ export default function AdminPage() {
   const [contentSaving, setContentSaving] = useState({});
   const [contentSaved, setContentSaved] = useState({});
   const [contentDefaults, setContentDefaults] = useState({});
+  const [sectionOrder, setSectionOrder] = useState([]);
+  const [sectionHidden, setSectionHidden] = useState({});
+  const [defaultSectionOrder, setDefaultSectionOrder] = useState([]);
+  const [layoutSaving, setLayoutSaving] = useState(false);
+  const [layoutSaved, setLayoutSaved] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
 
   // 이메일 발송
   const [emailType, setEmailType] = useState("legal_alert");
@@ -101,6 +107,9 @@ export default function AdminPage() {
       if (data.success) {
         setContentData(data.content);
         setContentDefaults(data.defaults);
+        setSectionOrder(data.sectionOrder || []);
+        setSectionHidden(data.sectionHidden || {});
+        setDefaultSectionOrder(data.defaultSectionOrder || []);
       }
     } catch {}
     setContentLoading(false);
@@ -122,6 +131,42 @@ export default function AdminPage() {
       }
     } catch {}
     setContentSaving(p => ({ ...p, [key]: false }));
+  };
+
+  const saveLayout = async (newOrder, newHidden) => {
+    setLayoutSaving(true);
+    try {
+      await fetch("/api/admin/content", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sectionOrder: newOrder, sectionHidden: newHidden }),
+      });
+      setLayoutSaved(true);
+      setTimeout(() => setLayoutSaved(false), 2000);
+    } catch {}
+    setLayoutSaving(false);
+  };
+
+  const moveSectionUp = (idx) => {
+    if (idx === 0) return;
+    const next = [...sectionOrder];
+    [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+    setSectionOrder(next);
+    saveLayout(next, sectionHidden);
+  };
+
+  const moveSectionDown = (idx) => {
+    if (idx === sectionOrder.length - 1) return;
+    const next = [...sectionOrder];
+    [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
+    setSectionOrder(next);
+    saveLayout(next, sectionHidden);
+  };
+
+  const toggleSectionHidden = (id) => {
+    const next = { ...sectionHidden, [id]: !sectionHidden[id] };
+    setSectionHidden(next);
+    saveLayout(sectionOrder, next);
   };
 
   const handleSendEmail = async () => {
@@ -362,67 +407,295 @@ export default function AdminPage() {
           {/* ── 콘텐츠 편집 ── */}
           {activeTab === "content" && (
             <>
-              <h1 className={styles.pageTitle}>랜딩페이지 콘텐츠 편집</h1>
-              <p style={{ fontSize: 13, color: "#888", marginBottom: 24 }}>
-                각 섹션의 텍스트를 수정하고 저장 버튼을 누르세요. 변경사항은 즉시 반영됩니다.
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:8 }}>
+                <h1 className={styles.pageTitle} style={{ margin:0 }}>랜딩페이지 편집</h1>
+                <a href="https://onbyun.vercel.app/" target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize:12, color:"#3C91E6", textDecoration:"none", background:"#e8f3fd", padding:"6px 14px", borderRadius:20, fontWeight:600 }}>
+                  사이트 미리보기 →
+                </a>
+              </div>
+              <p style={{ fontSize:13, color:"#94a3b8", marginBottom:24 }}>
+                좌측에서 섹션을 클릭하면 우측에 편집 패널이 열립니다. ▲▼로 순서 변경, 👁️로 섹션 숨김/표시.
               </p>
               {contentLoading ? (
                 <div className={styles.tableEmpty}>로딩 중...</div>
               ) : contentData ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  {[
-                    { key: "hero_headline",      label: "히어로 헤드라인",        rows: 2 },
-                    { key: "hero_subheadline",   label: "히어로 서브 카피",        rows: 2 },
-                    { key: "hero_badge",         label: "히어로 뱃지",            rows: 1 },
-                    { key: "hero_cta_primary",   label: "히어로 CTA (메인 버튼)", rows: 1 },
-                    { key: "hero_cta_secondary", label: "히어로 CTA (보조 버튼)", rows: 1 },
-                    { key: "contracts_title",    label: "계약서 섹션 제목",        rows: 1 },
-                    { key: "contracts_sub",      label: "계약서 섹션 설명",        rows: 2 },
-                    { key: "hiw_title",          label: "사용 방법 제목",          rows: 1 },
-                    { key: "hiw_sub",            label: "사용 방법 설명",          rows: 2 },
-                    { key: "proof_title",        label: "사회적 증명 제목",        rows: 1 },
-                    { key: "faq_title",          label: "FAQ 제목",               rows: 1 },
-                    { key: "pricing_title",      label: "요금제 제목",             rows: 1 },
-                    { key: "pricing_sub",        label: "요금제 설명",             rows: 2 },
-                    { key: "cta_headline",       label: "최하단 CTA 헤드라인",     rows: 2 },
-                    { key: "cta_sub",            label: "최하단 CTA 서브카피",     rows: 2 },
-                  ].map(({ key, label, rows }) => (
-                    <div key={key} className={styles.emailCard} style={{ padding: "20px 24px" }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                        <label className={styles.fieldLabel} style={{ margin: 0 }}>{label}</label>
-                        <span style={{ fontSize: 11, color: "#aaa" }}>key: {key}</span>
+                <div style={{ display:"grid", gridTemplateColumns:"280px 1fr", gap:20, alignItems:"flex-start" }}>
+
+                  {/* 좌측 — 섹션 목록 */}
+                  <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+                    {sectionOrder.map((secId, idx) => {
+                      const INFO = {
+                        hero:      { label:"S1 — 히어로",       icon:"🏠", bg:"#e8f3fd", fg:"#1d4ed8" },
+                        contracts: { label:"S2 — 계약서 유형",   icon:"📋", bg:"#f0fdf4", fg:"#166534" },
+                        problem:   { label:"S3 — 문제 공감",     icon:"💬", bg:"#fff7ed", fg:"#9a3412" },
+                        hiw:       { label:"S4 — 사용 방법",     icon:"🔢", bg:"#f5f3ff", fg:"#6d28d9" },
+                        proof:     { label:"S5 — 사회적 증명",   icon:"⭐", bg:"#fefce8", fg:"#854d0e" },
+                        features:  { label:"S6 — 핵심 기능",     icon:"✦",  bg:"#f0f9ff", fg:"#0369a1" },
+                        pricing:   { label:"S7 — 요금제",        icon:"💳", bg:"#fff1f2", fg:"#9f1239" },
+                        faq:       { label:"S8 — FAQ",           icon:"❓", bg:"#faf5ff", fg:"#7c3aed" },
+                        feedback:  { label:"S8-2 — 불편사항",    icon:"📬", bg:"#f0fdf4", fg:"#166534" },
+                        cta:       { label:"S9 — 최하단 CTA",    icon:"🚀", bg:"#eff6ff", fg:"#1d4ed8" },
+                      };
+                      const info = INFO[secId] || { label:secId, icon:"•", bg:"#f8fafc", fg:"#334155" };
+                      const isHidden = !!sectionHidden[secId];
+                      const isActive = activeSection === secId;
+                      return (
+                        <div key={secId}
+                          onClick={() => setActiveSection(isActive ? null : secId)}
+                          style={{
+                            display:"flex", alignItems:"center", gap:8,
+                            background: isActive ? info.bg : "#fff",
+                            border:`1.5px solid ${isActive ? info.fg : "#e2e8f0"}`,
+                            borderRadius:10, padding:"9px 10px", cursor:"pointer",
+                            opacity: isHidden ? 0.45 : 1, transition:"all 0.15s",
+                          }}>
+                          <span style={{ fontSize:16 }}>{info.icon}</span>
+                          <div style={{ flex:1, minWidth:0 }}>
+                            <div style={{ fontSize:12, fontWeight:700, color:info.fg, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{info.label}</div>
+                            {isHidden && <div style={{ fontSize:10, color:"#94a3b8" }}>숨김</div>}
+                          </div>
+                          <div style={{ display:"flex", flexDirection:"column", gap:1 }}>
+                            <button
+                              onClick={e => { e.stopPropagation(); moveSectionUp(idx); }}
+                              disabled={idx === 0}
+                              style={{ background:"none", border:"none", fontSize:9, color: idx===0?"#e2e8f0":"#64748b", cursor:idx===0?"default":"pointer", lineHeight:1, padding:"1px 3px" }}>▲</button>
+                            <button
+                              onClick={e => { e.stopPropagation(); moveSectionDown(idx); }}
+                              disabled={idx === sectionOrder.length - 1}
+                              style={{ background:"none", border:"none", fontSize:9, color:idx===sectionOrder.length-1?"#e2e8f0":"#64748b", cursor:idx===sectionOrder.length-1?"default":"pointer", lineHeight:1, padding:"1px 3px" }}>▼</button>
+                          </div>
+                          <button
+                            onClick={e => { e.stopPropagation(); toggleSectionHidden(secId); }}
+                            title={isHidden ? "표시하기" : "숨기기"}
+                            style={{ background:"none", border:"none", cursor:"pointer", fontSize:12, padding:"2px 3px", opacity:isHidden?0.4:1 }}>
+                            {isHidden ? "🙈" : "👁️"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <button
+                      style={{ fontSize:11, color:"#94a3b8", background:"none", border:"1px dashed #e2e8f0", borderRadius:8, padding:"7px", cursor:"pointer", marginTop:2 }}
+                      onClick={() => { setSectionOrder([...defaultSectionOrder]); setSectionHidden({}); saveLayout([...defaultSectionOrder], {}); }}>
+                      ↩ 순서 초기화
+                    </button>
+                    {layoutSaved && <div style={{ fontSize:11, color:"#22c55e", textAlign:"center", fontWeight:600 }}>✓ 레이아웃 저장됨</div>}
+                  </div>
+
+                  {/* 우측 — 편집 패널 */}
+                  <div>
+                    {!activeSection && (
+                      <div style={{ background:"#f8fafc", border:"1.5px dashed #e2e8f0", borderRadius:16, padding:"60px 24px", textAlign:"center" }}>
+                        <div style={{ fontSize:48, marginBottom:12 }}>👈</div>
+                        <div style={{ fontSize:15, fontWeight:600, color:"#334155", marginBottom:6 }}>좌측에서 섹션을 선택하세요</div>
+                        <div style={{ fontSize:13, color:"#94a3b8" }}>선택한 섹션의 텍스트와 리뷰를 편집할 수 있습니다.</div>
                       </div>
-                      <textarea
-                        className={styles.fieldTextarea}
-                        rows={rows}
-                        value={contentData[key] ?? ""}
-                        onChange={e => setContentData(p => ({ ...p, [key]: e.target.value }))}
-                        style={{ marginBottom: 10, resize: "vertical" }}
-                      />
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <button
-                          style={{ fontSize: 12, color: "#aaa", background: "none", border: "none", cursor: "pointer", padding: 0 }}
-                          onClick={() => setContentData(p => ({ ...p, [key]: contentDefaults[key] ?? "" }))}
-                        >
-                          ↩ 기본값으로
-                        </button>
-                        <button
-                          className={styles.sendBtn}
-                          style={{ padding: "7px 20px", fontSize: 13 }}
-                          onClick={() => saveContent(key, contentData[key] ?? "")}
-                          disabled={contentSaving[key]}
-                        >
-                          {contentSaving[key] ? "저장 중..." : contentSaved[key] ? "✓ 저장됨" : "저장"}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                    )}
+
+                    {/* 재사용 헬퍼 — 단일 필드 */}
+                    {activeSection && (() => {
+                      const SaveBtn = ({ k }) => (
+                        <div style={{ display:"flex", justifyContent:"flex-end", marginTop:4 }}>
+                          <button className={styles.sendBtn} style={{ padding:"5px 16px", fontSize:12 }}
+                            onClick={() => saveContent(k, contentData[k] ?? "")} disabled={contentSaving[k]}>
+                            {contentSaving[k] ? "저장 중…" : contentSaved[k] ? "✓ 저장됨" : "저장"}
+                          </button>
+                        </div>
+                      );
+                      const Field = ({ k, label, rows = 1 }) => (
+                        <div style={{ marginBottom:16 }}>
+                          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+                            <label style={{ fontSize:12, fontWeight:700, color:"#334155" }}>{label}</label>
+                            <button style={{ fontSize:11, color:"#94a3b8", background:"none", border:"none", cursor:"pointer" }}
+                              onClick={() => setContentData(p => ({ ...p, [k]: contentDefaults[k] ?? "" }))}>↩ 기본값</button>
+                          </div>
+                          <textarea className={styles.fieldTextarea} rows={rows}
+                            value={contentData[k] ?? ""}
+                            onChange={e => setContentData(p => ({ ...p, [k]: e.target.value }))}
+                            style={{ marginBottom:2, fontSize:13, resize:"vertical" }}/>
+                          <SaveBtn k={k} />
+                        </div>
+                      );
+
+                      const ReviewCard = ({ prefix, n }) => (
+                        <div style={{ background:"#f8fafc", borderRadius:12, border:"1px solid #e2e8f0", padding:"14px 16px", marginBottom:14 }}>
+                          <div style={{ fontSize:13, fontWeight:700, color:"#334155", marginBottom:10 }}>리뷰 {n}</div>
+                          {[
+                            [prefix + "_review" + n + "_quote",  "인용문",                               3],
+                            [prefix + "_review" + n + "_name",   "이름 (예: 김○○)",                      1],
+                            [prefix + "_review" + n + "_role",   "역할 (예: 직장인 29세 · 서울)",         1],
+                            [prefix + "_review" + n + "_result", "결과 뱃지 (예: 보증금 340만 원 미반환)", 1],
+                          ].map(([k, lbl, r]) => (
+                            <div key={k} style={{ marginBottom:8 }}>
+                              <label style={{ fontSize:11, fontWeight:600, color:"#64748b", display:"block", marginBottom:2 }}>{lbl}</label>
+                              <textarea className={styles.fieldTextarea} rows={r}
+                                value={contentData[k] ?? ""}
+                                onChange={e => setContentData(p => ({ ...p, [k]: e.target.value }))}
+                                style={{ marginBottom:1, fontSize:12 }}/>
+                            </div>
+                          ))}
+                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
+                            <button style={{ fontSize:11, color:"#94a3b8", background:"none", border:"none", cursor:"pointer" }}
+                              onClick={() => {
+                                [prefix+"_review"+n+"_quote", prefix+"_review"+n+"_name",
+                                 prefix+"_review"+n+"_role",  prefix+"_review"+n+"_result"].forEach(k =>
+                                  setContentData(p => ({ ...p, [k]: contentDefaults[k] ?? "" }))
+                                );
+                              }}>↩ 기본값으로</button>
+                            <button className={styles.sendBtn} style={{ padding:"6px 18px", fontSize:12 }}
+                              onClick={async () => {
+                                for (const k of [prefix+"_review"+n+"_quote", prefix+"_review"+n+"_name",
+                                                  prefix+"_review"+n+"_role",  prefix+"_review"+n+"_result"]) {
+                                  await saveContent(k, contentData[k] ?? "");
+                                }
+                              }}>리뷰 {n} 저장</button>
+                          </div>
+                        </div>
+                      );
+
+                      return (
+                        <div className={styles.emailCard}>
+                          {/* S1 히어로 */}
+                          {activeSection === "hero" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>🏠</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S1 — 히어로 섹션</h2>
+                            </div>
+                            <Field k="hero_headline"      label="헤드라인"       rows={2} />
+                            <Field k="hero_subheadline"   label="서브 카피"       rows={2} />
+                            <Field k="hero_badge"         label="뱃지 텍스트"     rows={1} />
+                            <Field k="hero_cta_primary"   label="메인 버튼 텍스트" rows={1} />
+                            <Field k="hero_cta_secondary" label="보조 버튼 텍스트" rows={1} />
+                          </>)}
+
+                          {/* S2 계약서 유형 */}
+                          {activeSection === "contracts" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>📋</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S2 — 계약서 유형 섹션</h2>
+                            </div>
+                            <Field k="contracts_title" label="섹션 제목" rows={1} />
+                            <Field k="contracts_sub"   label="섹션 설명" rows={2} />
+                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
+                              💡 계약서 카드 6개 항목(근로·전세·프리랜서 등)은 코드 Landing.js의 CONTRACT_TYPES에서 관리합니다.
+                            </div>
+                          </>)}
+
+                          {/* S3 문제 공감 */}
+                          {activeSection === "problem" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>💬</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S3 — 문제 공감 섹션</h2>
+                            </div>
+                            <Field k="problem_title" label="섹션 제목" rows={1} />
+                            <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16, marginBottom:8 }}>
+                              <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>📝 인용 리뷰 편집 (이름은 ○○ 처리 필수)</div>
+                              <ReviewCard prefix="problem" n={1} />
+                              <ReviewCard prefix="problem" n={2} />
+                              <ReviewCard prefix="problem" n={3} />
+                            </div>
+                          </>)}
+
+                          {/* S4 사용 방법 */}
+                          {activeSection === "hiw" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>🔢</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S4 — 사용 방법 섹션</h2>
+                            </div>
+                            <Field k="hiw_title" label="섹션 제목" rows={1} />
+                            <Field k="hiw_sub"   label="섹션 설명" rows={2} />
+                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
+                              💡 3단계 아이콘·번호·설명은 코드 Landing.js의 STEPS 배열에서 관리합니다.
+                            </div>
+                          </>)}
+
+                          {/* S5 사회적 증명 */}
+                          {activeSection === "proof" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>⭐</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S5 — 사회적 증명 섹션</h2>
+                            </div>
+                            <Field k="proof_title" label="섹션 제목" rows={1} />
+                            <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16, marginBottom:8 }}>
+                              <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>⭐ 성공 리뷰 편집 (이름은 ○○ 처리 필수)</div>
+                              <ReviewCard prefix="proof" n={1} />
+                              <ReviewCard prefix="proof" n={2} />
+                              <ReviewCard prefix="proof" n={3} />
+                            </div>
+                          </>)}
+
+                          {/* S6 핵심 기능 */}
+                          {activeSection === "features" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
+                              <span style={{ fontSize:20 }}>✦</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S6 — 핵심 기능 섹션</h2>
+                            </div>
+                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"16px", fontSize:13, color:"#475569", lineHeight:1.8 }}>
+                              체크리스트·AI 분석 기능 설명 섹션입니다.<br/>
+                              현재 이 섹션의 텍스트는 코드에서 직접 관리됩니다 (Landing.js FeaturesSection).<br/>
+                              섹션을 숨기려면 좌측 👁️ 버튼을 사용하세요.
+                            </div>
+                          </>)}
+
+                          {/* S7 요금제 */}
+                          {activeSection === "pricing" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>💳</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S7 — 요금제 섹션</h2>
+                            </div>
+                            <Field k="pricing_title" label="섹션 제목" rows={1} />
+                            <Field k="pricing_sub"   label="섹션 설명" rows={2} />
+                            <div style={{ background:"#fff1f2", border:"1px solid #fecdd3", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#9f1239" }}>
+                              💡 플랜별 가격·기능 항목은 Landing.js의 PLANS 배열에서 관리합니다.<br/>
+                              유료 플랜 활성화: PLANS 배열에서 disabled: true → false로 변경하세요.
+                            </div>
+                          </>)}
+
+                          {/* S8 FAQ */}
+                          {activeSection === "faq" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>❓</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S8 — FAQ 섹션</h2>
+                            </div>
+                            <Field k="faq_title" label="섹션 제목" rows={1} />
+                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
+                              💡 FAQ 질문·답변 6개는 Landing.js의 FAQS 배열에서 관리합니다.
+                            </div>
+                          </>)}
+
+                          {/* S8-2 불편사항 */}
+                          {activeSection === "feedback" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
+                              <span style={{ fontSize:20 }}>📬</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S8-2 — 불편사항 접수</h2>
+                            </div>
+                            <div style={{ background:"#f0fdf4", border:"1px solid #86efac", borderRadius:10, padding:"16px", fontSize:13, color:"#166534", lineHeight:1.7 }}>
+                              불편사항 폼 섹션입니다. /api/feedback API를 통해 Supabase feedback 테이블에 저장됩니다.<br/>
+                              접수된 내용은 어드민 대시보드에서 확인할 수 있습니다.<br/>
+                              섹션을 숨기려면 좌측 👁️ 버튼을 클릭하세요.
+                            </div>
+                          </>)}
+
+                          {/* S9 최하단 CTA */}
+                          {activeSection === "cta" && (<>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                              <span style={{ fontSize:20 }}>🚀</span>
+                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S9 — 최하단 CTA 섹션</h2>
+                            </div>
+                            <Field k="cta_headline" label="헤드라인" rows={2} />
+                            <Field k="cta_sub"      label="서브카피"  rows={2} />
+                          </>)}
+                        </div>
+                      );
+                    })()}
+                  </div>
                 </div>
               ) : (
                 <div className={styles.tableEmpty}>콘텐츠를 불러올 수 없습니다.</div>
               )}
             </>
           )}
+
 
           {/* ── 감사 로그 ── */}
           {activeTab === "audit" && (
