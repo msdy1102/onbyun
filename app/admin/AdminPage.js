@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -88,6 +88,7 @@ export default function AdminPage() {
 
   // 랜딩 콘텐츠 편집
   const [contentData, setContentData] = useState(null);
+  const contentDataRef = useRef(null); // stale closure 방지용 ref
   const [contentLoading, setContentLoading] = useState(false);
   const [contentSaving, setContentSaving] = useState({});
   const [contentSaved, setContentSaved] = useState({});
@@ -157,23 +158,35 @@ export default function AdminPage() {
     setPlanSaving(false);
   };
 
+  // contentData를 ref로도 추적 — saveContent의 stale closure 문제 해결
+  const updateContentData = useCallback((updater) => {
+    setContentData(prev => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      contentDataRef.current = next;
+      return next;
+    });
+  }, []);
+
   const loadContent = async () => {
     setContentLoading(true);
     try {
       const res = await fetch("/api/admin/content");
       const data = await res.json();
       if (data.success) {
+        contentDataRef.current = data.content;
         setContentData(data.content);
         setContentDefaults(data.defaults);
         setSectionOrder(data.sectionOrder || []);
-        setSectionHidden(data.sectionHidden || {});
+        setSectionHidden(data.sectionHidden || []);
         setDefaultSectionOrder(data.defaultSectionOrder || []);
       }
     } catch {}
     setContentLoading(false);
   };
 
-  const saveContent = async (key, value) => {
+  const saveContent = useCallback(async (key) => {
+    // ref에서 항상 최신 값을 읽어 stale closure 방지
+    const value = contentDataRef.current?.[key] ?? "";
     setContentSaving(p => ({ ...p, [key]: true }));
     setContentSaved(p => ({ ...p, [key]: false }));
     try {
@@ -189,7 +202,7 @@ export default function AdminPage() {
       }
     } catch {}
     setContentSaving(p => ({ ...p, [key]: false }));
-  };
+  }, []);
 
   const saveLayout = async (newOrder, newHidden) => {
     setLayoutSaving(true);
@@ -555,28 +568,28 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="헤드라인" rows={2}
                           value={contentData["hero_headline"]} defaultValue={contentDefaults["hero_headline"]}
-                          onChange={v => setContentData(p => ({ ...p, hero_headline: v }))}
-                          onSave={() => saveContent("hero_headline", contentData["hero_headline"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hero_headline: v }))}
+                          onSave={() => saveContent("hero_headline")}
                           saving={contentSaving["hero_headline"]} saved={contentSaved["hero_headline"]} />
                         <AdminField styles={styles} label="서브 카피" rows={2}
                           value={contentData["hero_subheadline"]} defaultValue={contentDefaults["hero_subheadline"]}
-                          onChange={v => setContentData(p => ({ ...p, hero_subheadline: v }))}
-                          onSave={() => saveContent("hero_subheadline", contentData["hero_subheadline"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hero_subheadline: v }))}
+                          onSave={() => saveContent("hero_subheadline")}
                           saving={contentSaving["hero_subheadline"]} saved={contentSaved["hero_subheadline"]} />
                         <AdminField styles={styles} label="뱃지 텍스트" rows={1}
                           value={contentData["hero_badge"]} defaultValue={contentDefaults["hero_badge"]}
-                          onChange={v => setContentData(p => ({ ...p, hero_badge: v }))}
-                          onSave={() => saveContent("hero_badge", contentData["hero_badge"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hero_badge: v }))}
+                          onSave={() => saveContent("hero_badge")}
                           saving={contentSaving["hero_badge"]} saved={contentSaved["hero_badge"]} />
                         <AdminField styles={styles} label="메인 버튼 텍스트" rows={1}
                           value={contentData["hero_cta_primary"]} defaultValue={contentDefaults["hero_cta_primary"]}
-                          onChange={v => setContentData(p => ({ ...p, hero_cta_primary: v }))}
-                          onSave={() => saveContent("hero_cta_primary", contentData["hero_cta_primary"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hero_cta_primary: v }))}
+                          onSave={() => saveContent("hero_cta_primary")}
                           saving={contentSaving["hero_cta_primary"]} saved={contentSaved["hero_cta_primary"]} />
                         <AdminField styles={styles} label="보조 버튼 텍스트" rows={1}
                           value={contentData["hero_cta_secondary"]} defaultValue={contentDefaults["hero_cta_secondary"]}
-                          onChange={v => setContentData(p => ({ ...p, hero_cta_secondary: v }))}
-                          onSave={() => saveContent("hero_cta_secondary", contentData["hero_cta_secondary"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hero_cta_secondary: v }))}
+                          onSave={() => saveContent("hero_cta_secondary")}
                           saving={contentSaving["hero_cta_secondary"]} saved={contentSaved["hero_cta_secondary"]} />
                       </div>
                     )}
@@ -589,13 +602,13 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="섹션 제목" rows={1}
                           value={contentData["contracts_title"]} defaultValue={contentDefaults["contracts_title"]}
-                          onChange={v => setContentData(p => ({ ...p, contracts_title: v }))}
-                          onSave={() => saveContent("contracts_title", contentData["contracts_title"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, contracts_title: v }))}
+                          onSave={() => saveContent("contracts_title")}
                           saving={contentSaving["contracts_title"]} saved={contentSaved["contracts_title"]} />
                         <AdminField styles={styles} label="섹션 설명" rows={2}
                           value={contentData["contracts_sub"]} defaultValue={contentDefaults["contracts_sub"]}
-                          onChange={v => setContentData(p => ({ ...p, contracts_sub: v }))}
-                          onSave={() => saveContent("contracts_sub", contentData["contracts_sub"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, contracts_sub: v }))}
+                          onSave={() => saveContent("contracts_sub")}
                           saving={contentSaving["contracts_sub"]} saved={contentSaved["contracts_sub"]} />
                         <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
                           💡 계약서 카드 6개는 Landing.js의 CONTRACT_TYPES 배열에서 관리합니다.
@@ -611,20 +624,20 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="섹션 제목" rows={1}
                           value={contentData["problem_title"]} defaultValue={contentDefaults["problem_title"]}
-                          onChange={v => setContentData(p => ({ ...p, problem_title: v }))}
-                          onSave={() => saveContent("problem_title", contentData["problem_title"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, problem_title: v }))}
+                          onSave={() => saveContent("problem_title")}
                           saving={contentSaving["problem_title"]} saved={contentSaved["problem_title"]} />
                         <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16 }}>
                           <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>📝 인용 리뷰 편집 (이름은 ○○ 처리 필수)</div>
                           <AdminReviewCard styles={styles} prefix="problem" n={1} contentData={contentData} contentDefaults={contentDefaults}
-                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
-                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                            onChangeField={(k, v) => updateContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k)), Promise.resolve())} />
                           <AdminReviewCard styles={styles} prefix="problem" n={2} contentData={contentData} contentDefaults={contentDefaults}
-                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
-                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                            onChangeField={(k, v) => updateContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k)), Promise.resolve())} />
                           <AdminReviewCard styles={styles} prefix="problem" n={3} contentData={contentData} contentDefaults={contentDefaults}
-                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
-                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                            onChangeField={(k, v) => updateContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k)), Promise.resolve())} />
                         </div>
                       </div>
                     )}
@@ -637,13 +650,13 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="섹션 제목" rows={1}
                           value={contentData["hiw_title"]} defaultValue={contentDefaults["hiw_title"]}
-                          onChange={v => setContentData(p => ({ ...p, hiw_title: v }))}
-                          onSave={() => saveContent("hiw_title", contentData["hiw_title"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hiw_title: v }))}
+                          onSave={() => saveContent("hiw_title")}
                           saving={contentSaving["hiw_title"]} saved={contentSaved["hiw_title"]} />
                         <AdminField styles={styles} label="섹션 설명" rows={2}
                           value={contentData["hiw_sub"]} defaultValue={contentDefaults["hiw_sub"]}
-                          onChange={v => setContentData(p => ({ ...p, hiw_sub: v }))}
-                          onSave={() => saveContent("hiw_sub", contentData["hiw_sub"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, hiw_sub: v }))}
+                          onSave={() => saveContent("hiw_sub")}
                           saving={contentSaving["hiw_sub"]} saved={contentSaved["hiw_sub"]} />
                         <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
                           💡 3단계 아이콘·번호·설명은 Landing.js의 STEPS 배열에서 관리합니다.
@@ -659,20 +672,20 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="섹션 제목" rows={1}
                           value={contentData["proof_title"]} defaultValue={contentDefaults["proof_title"]}
-                          onChange={v => setContentData(p => ({ ...p, proof_title: v }))}
-                          onSave={() => saveContent("proof_title", contentData["proof_title"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, proof_title: v }))}
+                          onSave={() => saveContent("proof_title")}
                           saving={contentSaving["proof_title"]} saved={contentSaved["proof_title"]} />
                         <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16 }}>
                           <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>⭐ 성공 리뷰 편집 (이름은 ○○ 처리 필수)</div>
                           <AdminReviewCard styles={styles} prefix="proof" n={1} contentData={contentData} contentDefaults={contentDefaults}
-                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
-                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                            onChangeField={(k, v) => updateContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k)), Promise.resolve())} />
                           <AdminReviewCard styles={styles} prefix="proof" n={2} contentData={contentData} contentDefaults={contentDefaults}
-                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
-                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                            onChangeField={(k, v) => updateContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k)), Promise.resolve())} />
                           <AdminReviewCard styles={styles} prefix="proof" n={3} contentData={contentData} contentDefaults={contentDefaults}
-                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
-                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                            onChangeField={(k, v) => updateContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k)), Promise.resolve())} />
                         </div>
                       </div>
                     )}
@@ -699,13 +712,13 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="섹션 제목" rows={1}
                           value={contentData["pricing_title"]} defaultValue={contentDefaults["pricing_title"]}
-                          onChange={v => setContentData(p => ({ ...p, pricing_title: v }))}
-                          onSave={() => saveContent("pricing_title", contentData["pricing_title"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, pricing_title: v }))}
+                          onSave={() => saveContent("pricing_title")}
                           saving={contentSaving["pricing_title"]} saved={contentSaved["pricing_title"]} />
                         <AdminField styles={styles} label="섹션 설명" rows={2}
                           value={contentData["pricing_sub"]} defaultValue={contentDefaults["pricing_sub"]}
-                          onChange={v => setContentData(p => ({ ...p, pricing_sub: v }))}
-                          onSave={() => saveContent("pricing_sub", contentData["pricing_sub"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, pricing_sub: v }))}
+                          onSave={() => saveContent("pricing_sub")}
                           saving={contentSaving["pricing_sub"]} saved={contentSaved["pricing_sub"]} />
                         <div style={{ background:"#fff1f2", border:"1px solid #fecdd3", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#9f1239" }}>
                           💡 플랜별 가격·기능은 Landing.js의 PLANS 배열에서 관리합니다. 유료 플랜 활성화: disabled: true → false.
@@ -721,8 +734,8 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="섹션 제목" rows={1}
                           value={contentData["faq_title"]} defaultValue={contentDefaults["faq_title"]}
-                          onChange={v => setContentData(p => ({ ...p, faq_title: v }))}
-                          onSave={() => saveContent("faq_title", contentData["faq_title"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, faq_title: v }))}
+                          onSave={() => saveContent("faq_title")}
                           saving={contentSaving["faq_title"]} saved={contentSaved["faq_title"]} />
                         <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
                           💡 FAQ 질문·답변 항목은 Landing.js의 FAQS 배열에서 관리합니다.
@@ -751,13 +764,13 @@ export default function AdminPage() {
                         </div>
                         <AdminField styles={styles} label="헤드라인" rows={2}
                           value={contentData["cta_headline"]} defaultValue={contentDefaults["cta_headline"]}
-                          onChange={v => setContentData(p => ({ ...p, cta_headline: v }))}
-                          onSave={() => saveContent("cta_headline", contentData["cta_headline"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, cta_headline: v }))}
+                          onSave={() => saveContent("cta_headline")}
                           saving={contentSaving["cta_headline"]} saved={contentSaved["cta_headline"]} />
                         <AdminField styles={styles} label="서브카피" rows={2}
                           value={contentData["cta_sub"]} defaultValue={contentDefaults["cta_sub"]}
-                          onChange={v => setContentData(p => ({ ...p, cta_sub: v }))}
-                          onSave={() => saveContent("cta_sub", contentData["cta_sub"] ?? "")}
+                          onChange={v => updateContentData(p => ({ ...p, cta_sub: v }))}
+                          onSave={() => saveContent("cta_sub")}
                           saving={contentSaving["cta_sub"]} saved={contentSaved["cta_sub"]} />
                       </div>
                     )}

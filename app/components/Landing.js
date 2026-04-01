@@ -467,7 +467,7 @@ const STEPS = [
   {
     num: "01",
     title: "계약서 유형 선택",
-    desc: "근로계약서·전세·프리랜서·알바 중 해당하는 걸 \n누르면 됩니다. 텍스트로 검색하면 121종 중에서 \n바로 찾아드립니다.",
+    desc: "근로계약서·전세·프리랜서·알바 중 해당하는 걸 누르면 됩니다. 텍스트로 검색하면 121종 중에서 바로 찾아드립니다.",
     time: "선택까지 10초",
     icon: (
       <svg className="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -478,7 +478,7 @@ const STEPS = [
   {
     num: "02",
     title: "PDF 또는 사진 업로드",
-    desc: "계약서 PDF를 올리거나, 스마트폰으로 찍은 사진을 \n올려도 됩니다. AI가 텍스트를 인식하고 위험 조항 \n위치를 찾아냅니다.",
+    desc: "계약서 PDF를 올리거나, 스마트폰으로 찍은 사진을 올려도 됩니다. AI가 텍스트를 인식하고 위험 조항 위치를 찾아냅니다.",
     time: "분석까지 평균 18초",
     icon: (
       <svg className="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -489,7 +489,7 @@ const STEPS = [
   {
     num: "03",
     title: "위험 조항 확인 & 대응",
-    desc: "'이 조항은 왜 위험한지', \n'어떻게 수정 요청하면 되는지'를 \n알아듣기 쉬운 용어로 설명해드립니다.",
+    desc: "'이 조항은 왜 위험한지', '어떻게 수정 요청하면 되는지'를 쉬운 말로 설명해드립니다.",
     time: "서명 전 10분이면 충분",
     icon: (
       <svg className="w-6 h-6 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
