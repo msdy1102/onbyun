@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import "../landing.css";
@@ -157,7 +157,7 @@ function GNB() {
 /* ──────────────────────────────────────────
    S1. 히어로
 ────────────────────────────────────────── */
-function HeroSection({ isLoggedIn }) {
+function HeroSection({ isLoggedIn, content: c = {} }) {
   return (
     <section className="hero-bg pt-28 pb-20 md:pt-36 md:pb-28 px-4 sm:px-6 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
@@ -166,19 +166,26 @@ function HeroSection({ isLoggedIn }) {
           {/* 뱃지 */}
           <div className="inline-flex items-center gap-2 bg-brand-light border border-brand-border text-brand text-xs font-semibold px-4 py-2 rounded-full mb-6">
             <span className="w-2 h-2 rounded-full bg-brand inline-block animate-pulse"></span>
-            계약서 분석 · 121종 무료 제공 · 가입 30초
+            {c.hero_badge || "계약서 분석 · 121종 무료 제공 · 가입 30초"}
           </div>
 
           {/* H1 */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-5">
-            서명하기 전,<br />
-            <span className="text-gradient">위험 조항</span>부터 확인하세요
+            {c.hero_headline ? (
+              <span dangerouslySetInnerHTML={{ __html: c.hero_headline.split("\n").join("<br />").replace("위험 조항", '<span class=\"text-gradient\">위험 조항</span>') }} />
+            ) : (
+              <>서명하기 전,<br /><span className="text-gradient">위험 조항</span>부터 확인하세요</>
+            )}
           </h1>
 
           {/* 서브카피 */}
           <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
-            근로계약서·전세계약서·프리랜서 계약서 —<br className="hidden sm:block" />
-            어떤 계약서든 <strong className="text-gray-700">30초 안에</strong> 읽고, 위험한 조항 3가지를 짚어드립니다.
+            {c.hero_subheadline ? (
+              <span dangerouslySetInnerHTML={{ __html: c.hero_subheadline.split("\n").join("<br />").replace("30초 안에", '<strong style=\"color:#374151\">30초 안에</strong>') }} />
+            ) : (
+              <>근로계약서·전세계약서·프리랜서 계약서 —<br className="hidden sm:block" />
+              어떤 계약서든 <strong className="text-gray-700">30초 안에</strong> 읽고, 위험한 조항 3가지를 짚어드립니다.</>
+            )}
           </p>
 
           {/* CTA 버튼 */}
@@ -187,7 +194,7 @@ function HeroSection({ isLoggedIn }) {
               href={isLoggedIn ? "/ai" : "/onboarding"}
               className="btn-primary w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full text-base font-bold shadow-md"
             >
-              {isLoggedIn ? "계약서 분석하기" : "내 계약서 확인하기"}
+              {isLoggedIn ? (c.hero_cta_primary || "계약서 분석하기") : (c.hero_cta_primary || "내 계약서 확인하기")}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
@@ -196,7 +203,7 @@ function HeroSection({ isLoggedIn }) {
               href="/doc"
               className="btn-secondary w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 rounded-full text-base font-semibold"
             >
-              121종 목록 보기
+              {c.hero_cta_secondary || "121종 목록 보기"}
             </Link>
           </div>
 
@@ -337,21 +344,22 @@ const CONTRACT_TYPES = [
   },
 ];
 
-function ContractsSection() {
+function ContractsSection({ content: c = {} }) {
   return (
     <section id="contracts" className="py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
         {/* 섹션 헤더 */}
         <div className="text-center mb-12">
           <span className="inline-block text-brand text-sm font-semibold tracking-wider uppercase mb-3">
-            지금 어떤 계약서를 받으셨나요?
+            {c.contracts_badge || "지금 어떤 계약서를 받으셨나요?"}
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            받은 계약서를 클릭하면 바로 확인할 수 있어요
+            {c.contracts_title || "받은 계약서를 클릭하면 바로 확인할 수 있어요"}
           </h2>
           <p className="text-gray-500 text-base max-w-xl mx-auto">
-            취업·알바·전세·프리랜서 계약서마다 놓치기 쉬운 조항이 다릅니다.<br />
-            유형별로 위험 조항 상위 5개를 먼저 보여드립니다.
+            {(c.contracts_sub || "취업·알바·전세·프리랜서 계약서마다 놓치기 쉬운 조항이 다릅니다.\n유형별로 위험 조항 상위 5개를 먼저 보여드립니다.").split("\n").map((line, i) => (
+              <span key={i}>{line}{i === 0 && <br />}</span>
+            ))}
           </p>
         </div>
 
@@ -414,7 +422,30 @@ const REVIEWS_PROBLEM = [
   },
 ];
 
-function ProblemSection() {
+function ProblemSection({ content: c = {} }) {
+  const reviews = [
+    {
+      icon: "💼",
+      quote:  c.problem_review1_quote  || REVIEWS_PROBLEM[0].quote,
+      name:   c.problem_review1_name   || REVIEWS_PROBLEM[0].name,
+      role:   c.problem_review1_role   || REVIEWS_PROBLEM[0].role,
+      result: c.problem_review1_result || REVIEWS_PROBLEM[0].result,
+    },
+    {
+      icon: "🏠",
+      quote:  c.problem_review2_quote  || REVIEWS_PROBLEM[1].quote,
+      name:   c.problem_review2_name   || REVIEWS_PROBLEM[1].name,
+      role:   c.problem_review2_role   || REVIEWS_PROBLEM[1].role,
+      result: c.problem_review2_result || REVIEWS_PROBLEM[1].result,
+    },
+    {
+      icon: "💻",
+      quote:  c.problem_review3_quote  || REVIEWS_PROBLEM[2].quote,
+      name:   c.problem_review3_name   || REVIEWS_PROBLEM[2].name,
+      role:   c.problem_review3_role   || REVIEWS_PROBLEM[2].role,
+      result: c.problem_review3_result || REVIEWS_PROBLEM[2].result,
+    },
+  ];
   return (
     <section className="py-20 px-4 sm:px-6 section-alt">
       <div className="max-w-6xl mx-auto">
@@ -423,12 +454,12 @@ function ProblemSection() {
             많은 분들이 이렇게 후회합니다
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
-            서명하고 나서 알게 되는 것들
+            {c.problem_title || "서명하고 나서 알게 되는 것들"}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {REVIEWS_PROBLEM.map((r) => (
+          {reviews.map((r) => (
             <div key={r.name} className="review-card glass-card rounded-2xl p-6">
               <div className="text-3xl mb-4">{r.icon}</div>
               <blockquote className="text-gray-700 text-sm leading-relaxed mb-5 italic">
@@ -499,7 +530,7 @@ const STEPS = [
   },
 ];
 
-function HowItWorksSection() {
+function HowItWorksSection({ content: c = {} }) {
   return (
     <section id="ai" className="py-20 px-4 sm:px-6 bg-white">
       <div className="max-w-5xl mx-auto">
@@ -508,10 +539,10 @@ function HowItWorksSection() {
             사용 방법
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            파일 올리고 30초, 끝입니다
+            {c.hiw_title || "파일 올리고 30초, 끝입니다"}
           </h2>
           <p className="text-gray-500 text-base">
-            앱 설치 없이, 회원가입 없이도 바로 확인됩니다. 이메일 가입은 30초면 충분합니다.
+            {c.hiw_sub || "앱 설치 없이, 회원가입 없이도 바로 확인됩니다. 이메일 가입은 30초면 충분합니다."}
           </p>
         </div>
 
@@ -574,7 +605,7 @@ const USER_REVIEWS = [
   },
 ];
 
-function SocialProofSection() {
+function SocialProofSection({ content: c = {} }) {
   return (
     <section className="py-20 px-4 sm:px-6 section-alt">
       <div className="max-w-6xl mx-auto">
@@ -596,7 +627,11 @@ function SocialProofSection() {
 
         {/* 리뷰 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {USER_REVIEWS.map((r) => (
+          {[
+            { stars:5, quote: c.proof_review1_quote||USER_REVIEWS[0].quote, name: c.proof_review1_name||USER_REVIEWS[0].name, role: c.proof_review1_role||USER_REVIEWS[0].role, result: c.proof_review1_result||USER_REVIEWS[0].result },
+            { stars:5, quote: c.proof_review2_quote||USER_REVIEWS[1].quote, name: c.proof_review2_name||USER_REVIEWS[1].name, role: c.proof_review2_role||USER_REVIEWS[1].role, result: c.proof_review2_result||USER_REVIEWS[1].result },
+            { stars:5, quote: c.proof_review3_quote||USER_REVIEWS[2].quote, name: c.proof_review3_name||USER_REVIEWS[2].name, role: c.proof_review3_role||USER_REVIEWS[2].role, result: c.proof_review3_result||USER_REVIEWS[2].result },
+          ].map((r) => (
             <div key={r.name} className="review-card bg-white border border-gray-200 rounded-2xl p-6">
               <div className="flex gap-0.5 mb-3">
                 {[...Array(r.stars)].map((_, i) => (
@@ -858,18 +893,22 @@ const PLANS = [
   },
 ];
 
-function PricingSection() {
+function PricingSection({ content: c = {} }) {
   return (
     <section id="pricing" className="py-20 px-4 sm:px-6 section-alt">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <span className="inline-block text-brand text-sm font-semibold tracking-wider uppercase mb-3">요금제</span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
-            체크리스트는 무료, AI 분석은 월 9,900원
+            {c.pricing_title || "체크리스트는 무료, AI 분석은 월 9,900원"}
           </h2>
           <p className="text-gray-500 text-base max-w-lg mx-auto">
-            계약서 체크리스트 121종은 가입 없이 영구 무료입니다.<br />
-            AI 분석이 하루 1회 이상 필요하다면 스탠다드를 추천합니다.
+            {c.pricing_sub ? (
+              c.pricing_sub.split("\n").map((l, i) => <span key={i}>{l}<br /></span>)
+            ) : (
+              <>계약서 체크리스트 121종은 가입 없이 영구 무료입니다.<br />
+              AI 분석이 하루 1회 이상 필요하다면 스탠다드를 추천합니다.</>
+            )}
           </p>
         </div>
 
@@ -972,7 +1011,7 @@ const FAQS = [
   },
 ];
 
-function FAQSection() {
+function FAQSection({ content: c = {} }) {
   const [openIdx, setOpenIdx] = useState(null);
 
   return (
@@ -980,7 +1019,7 @@ function FAQSection() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900">
-            혹시 이런 게 걱정되시나요?
+            {c.faq_title || "혹시 이런 게 걱정되시나요?"}
           </h2>
         </div>
 
@@ -1138,7 +1177,7 @@ function FeedbackSection() {
 /* ──────────────────────────────────────────
    S9. 최하단 CTA
 ────────────────────────────────────────── */
-function FinalCTA({ isLoggedIn }) {
+function FinalCTA({ isLoggedIn, content: c = {} }) {
   return (
     <section className="cta-bg py-24 px-4 sm:px-6">
       <div className="max-w-3xl mx-auto text-center">
@@ -1146,12 +1185,19 @@ function FinalCTA({ isLoggedIn }) {
           지금 바로 확인하세요
         </span>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight mb-5">
-          계약서 앞에서<br />
-          더 이상 <em className="not-italic underline decoration-white/40 decoration-2 underline-offset-4">을(乙)</em>이 되지 않도록
+          {c.cta_headline ? (
+            c.cta_headline.split("\n").map((l, i) => <span key={i} style={{ display:"block" }}>{l}</span>)
+          ) : (
+            <>계약서 앞에서<br />
+            더 이상 <em className="not-italic underline decoration-white/40 decoration-2 underline-offset-4">을(乙)</em>이 되지 않도록</>
+          )}
         </h2>
         <p className="text-white/80 text-base mb-10">
-          지금 올리면 18초 후에 결과가 나옵니다.<br />
-          카드 등록 없이, 첫 분석은 무료입니다.
+          {c.cta_sub ? (
+            c.cta_sub.split("\n").map((l, i) => <span key={i} style={{ display:"block" }}>{l}</span>)
+          ) : (
+            <>지금 올리면 18초 후에 결과가 나옵니다.<br />카드 등록 없이, 첫 분석은 무료입니다.</>
+          )}
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -1237,20 +1283,31 @@ function Footer() {
 export default function Landing() {
   const { data: session, status } = useSession();
   const isLoggedIn = status === "authenticated" && !!session?.user;
+  const [siteContent, setSiteContent] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/config")
+      .then(r => r.json())
+      .then(data => setSiteContent(data))
+      .catch(() => {}); // 실패 시 하드코딩 기본값 유지
+  }, []);
+
+  const c = siteContent || {}; // 로드 전엔 빈 객체 — 각 섹션이 기본값 fallback 처리
+
   return (
     <div className="landing-root">
       <GNB />
       <main>
-        <HeroSection isLoggedIn={isLoggedIn} />
-        <ContractsSection />
-        <ProblemSection />
-        <HowItWorksSection />
-        <SocialProofSection />
+        <HeroSection isLoggedIn={isLoggedIn} content={c} />
+        <ContractsSection content={c} />
+        <ProblemSection content={c} />
+        <HowItWorksSection content={c} />
+        <SocialProofSection content={c} />
         <FeaturesSection />
-        <PricingSection />
-        <FAQSection />
+        <PricingSection content={c} />
+        <FAQSection content={c} />
         <FeedbackSection />
-        <FinalCTA isLoggedIn={isLoggedIn} />
+        <FinalCTA isLoggedIn={isLoggedIn} content={c} />
       </main>
       <Footer />
     </div>
