@@ -816,6 +816,7 @@ const PLANS = [
     cta: "무료로 시작하기",
     ctaHref: "/onboarding",
     featured: false,
+    disabled: false,
   },
   {
     name: "스탠다드",
@@ -834,6 +835,7 @@ const PLANS = [
     cta: "14일 무료 체험",
     ctaHref: "/onboarding",
     featured: true,
+    disabled: true,
   },
   {
     name: "프로",
@@ -852,6 +854,7 @@ const PLANS = [
     cta: "프로 시작하기",
     ctaHref: "/onboarding",
     featured: false,
+    disabled: true,
   },
 ];
 
@@ -910,16 +913,22 @@ function PricingSection() {
                 ))}
               </ul>
 
-              <Link
-                href={plan.ctaHref}
-                className={`block text-center py-3 rounded-full font-bold text-sm transition-all ${
-                  plan.featured
-                    ? "btn-primary shadow-md"
-                    : "btn-secondary"
-                }`}
-              >
-                {plan.cta}
-              </Link>
+              {plan.disabled ? (
+                <div className="block text-center py-3 rounded-full font-bold text-sm bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200 select-none">
+                  준비 중
+                </div>
+              ) : (
+                <Link
+                  href={plan.ctaHref}
+                  className={`block text-center py-3 rounded-full font-bold text-sm transition-all ${
+                    plan.featured
+                      ? "btn-primary shadow-md"
+                      : "btn-secondary"
+                  }`}
+                >
+                  {plan.cta}
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -1003,6 +1012,124 @@ function FAQSection() {
             </div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ──────────────────────────────────────────
+   S8-2. 불편사항 접수
+────────────────────────────────────────── */
+function FeedbackSection() {
+  const [category, setCategory] = useState("");
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!text.trim() || loading) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category: category || "기타", text: text.trim() }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSent(true);
+        setText("");
+        setCategory("");
+      } else {
+        setError(json.message ?? "전송에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch {
+      setError("서버 오류가 발생했습니다. 다시 시도해주세요.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <section className="py-16 px-4 sm:px-6 bg-white">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <span className="inline-block text-brand text-sm font-semibold tracking-wider uppercase mb-3">
+            불편사항 접수
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">
+            불편하셨나요?
+          </h2>
+          <p className="text-gray-500 text-base">
+            서비스 개선에 직접 반영됩니다. 편하게 적어주세요.
+          </p>
+        </div>
+
+        {sent ? (
+          <div className="glass-card rounded-2xl p-10 text-center">
+            <div className="w-14 h-14 rounded-full bg-brand-light border border-brand-border flex items-center justify-center mx-auto mb-4 text-2xl">
+              ✓
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">소중한 의견 감사해요!</h3>
+            <p className="text-gray-500 text-sm mb-6">접수된 내용을 확인하고 빠르게 반영할게요.</p>
+            <button
+              onClick={() => setSent(false)}
+              className="btn-secondary px-6 py-2 rounded-full text-sm font-semibold"
+            >
+              다른 의견 보내기
+            </button>
+          </div>
+        ) : (
+          <div className="glass-card rounded-2xl p-8">
+            {/* 카테고리 선택 */}
+            <div className="flex flex-wrap gap-2 mb-5">
+              {["정보 오류", "기능 오작동", "UI/UX 불편", "콘텐츠 요청", "기타"].map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(prev => prev === cat ? "" : cat)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                    category === cat
+                      ? "bg-brand text-white border-brand"
+                      : "bg-white text-gray-500 border-gray-200 hover:border-brand hover:text-brand"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* 텍스트 입력 */}
+            <textarea
+              value={text}
+              onChange={e => { if (e.target.value.length <= 500) setText(e.target.value); }}
+              placeholder={"불편하셨던 점이나 개선됐으면 하는 내용을 자유롭게 적어주세요.\n예) '근로계약서 주의사항에 00 내용이 빠진 것 같아요'"}
+              rows={5}
+              className="w-full px-4 py-3 border border-brand-border rounded-xl text-sm text-gray-800 resize-none outline-none bg-surface leading-relaxed transition-all focus:border-brand focus:shadow-sm mb-3"
+              style={{ boxSizing: "border-box" }}
+            />
+
+            {/* 하단 행 */}
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400">{text.length} / 500자</span>
+              <button
+                onClick={handleSubmit}
+                disabled={!text.trim() || loading}
+                className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${
+                  !text.trim() || loading
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "btn-primary"
+                }`}
+              >
+                {loading ? "전송 중..." : "전송하기"}
+              </button>
+            </div>
+
+            {error && (
+              <p className="mt-3 text-xs text-red-500">{error}</p>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -1122,6 +1249,7 @@ export default function Landing() {
         <FeaturesSection />
         <PricingSection />
         <FAQSection />
+        <FeedbackSection />
         <FinalCTA isLoggedIn={isLoggedIn} />
       </main>
       <Footer />

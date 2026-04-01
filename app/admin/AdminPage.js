@@ -28,6 +28,13 @@ export default function AdminPage() {
   const [planEditing, setPlanEditing] = useState(null);
   const [planSaving, setPlanSaving] = useState(false);
 
+  // 랜딩 콘텐츠 편집
+  const [contentData, setContentData] = useState(null);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [contentSaving, setContentSaving] = useState({});
+  const [contentSaved, setContentSaved] = useState({});
+  const [contentDefaults, setContentDefaults] = useState({});
+
   // 이메일 발송
   const [emailType, setEmailType] = useState("legal_alert");
   const [emailFields, setEmailFields] = useState({ lawName: "", summary: "", link: "", title: "", content: "", ctaText: "", ctaUrl: "" });
@@ -69,6 +76,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (activeTab === "users") loadUsers(userPage, userQuery);
+    if (activeTab === "content" && !contentData) loadContent();
   }, [activeTab, userPage]);
 
   const handlePlanChange = async (userId, plan) => {
@@ -83,6 +91,37 @@ export default function AdminPage() {
       setPlanEditing(null);
     } catch {}
     setPlanSaving(false);
+  };
+
+  const loadContent = async () => {
+    setContentLoading(true);
+    try {
+      const res = await fetch("/api/admin/content");
+      const data = await res.json();
+      if (data.success) {
+        setContentData(data.content);
+        setContentDefaults(data.defaults);
+      }
+    } catch {}
+    setContentLoading(false);
+  };
+
+  const saveContent = async (key, value) => {
+    setContentSaving(p => ({ ...p, [key]: true }));
+    setContentSaved(p => ({ ...p, [key]: false }));
+    try {
+      const res = await fetch("/api/admin/content", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, value }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setContentSaved(p => ({ ...p, [key]: true }));
+        setTimeout(() => setContentSaved(p => ({ ...p, [key]: false })), 2000);
+      }
+    } catch {}
+    setContentSaving(p => ({ ...p, [key]: false }));
   };
 
   const handleSendEmail = async () => {
@@ -129,6 +168,7 @@ export default function AdminPage() {
             { id: "dashboard", label: "📊 대시보드" },
             { id: "users",     label: "👤 유저 관리" },
             { id: "email",     label: "📬 이메일 발송" },
+            { id: "content",   label: "✏️ 콘텐츠 편집" },
             { id: "audit",     label: "🔒 감사 로그" },
           ].map(t => (
             <button
@@ -316,6 +356,71 @@ export default function AdminPage() {
                   </div>
                 )}
               </div>
+            </>
+          )}
+
+          {/* ── 콘텐츠 편집 ── */}
+          {activeTab === "content" && (
+            <>
+              <h1 className={styles.pageTitle}>랜딩페이지 콘텐츠 편집</h1>
+              <p style={{ fontSize: 13, color: "#888", marginBottom: 24 }}>
+                각 섹션의 텍스트를 수정하고 저장 버튼을 누르세요. 변경사항은 즉시 반영됩니다.
+              </p>
+              {contentLoading ? (
+                <div className={styles.tableEmpty}>로딩 중...</div>
+              ) : contentData ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  {[
+                    { key: "hero_headline",      label: "히어로 헤드라인",        rows: 2 },
+                    { key: "hero_subheadline",   label: "히어로 서브 카피",        rows: 2 },
+                    { key: "hero_badge",         label: "히어로 뱃지",            rows: 1 },
+                    { key: "hero_cta_primary",   label: "히어로 CTA (메인 버튼)", rows: 1 },
+                    { key: "hero_cta_secondary", label: "히어로 CTA (보조 버튼)", rows: 1 },
+                    { key: "contracts_title",    label: "계약서 섹션 제목",        rows: 1 },
+                    { key: "contracts_sub",      label: "계약서 섹션 설명",        rows: 2 },
+                    { key: "hiw_title",          label: "사용 방법 제목",          rows: 1 },
+                    { key: "hiw_sub",            label: "사용 방법 설명",          rows: 2 },
+                    { key: "proof_title",        label: "사회적 증명 제목",        rows: 1 },
+                    { key: "faq_title",          label: "FAQ 제목",               rows: 1 },
+                    { key: "pricing_title",      label: "요금제 제목",             rows: 1 },
+                    { key: "pricing_sub",        label: "요금제 설명",             rows: 2 },
+                    { key: "cta_headline",       label: "최하단 CTA 헤드라인",     rows: 2 },
+                    { key: "cta_sub",            label: "최하단 CTA 서브카피",     rows: 2 },
+                  ].map(({ key, label, rows }) => (
+                    <div key={key} className={styles.emailCard} style={{ padding: "20px 24px" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                        <label className={styles.fieldLabel} style={{ margin: 0 }}>{label}</label>
+                        <span style={{ fontSize: 11, color: "#aaa" }}>key: {key}</span>
+                      </div>
+                      <textarea
+                        className={styles.fieldTextarea}
+                        rows={rows}
+                        value={contentData[key] ?? ""}
+                        onChange={e => setContentData(p => ({ ...p, [key]: e.target.value }))}
+                        style={{ marginBottom: 10, resize: "vertical" }}
+                      />
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <button
+                          style={{ fontSize: 12, color: "#aaa", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                          onClick={() => setContentData(p => ({ ...p, [key]: contentDefaults[key] ?? "" }))}
+                        >
+                          ↩ 기본값으로
+                        </button>
+                        <button
+                          className={styles.sendBtn}
+                          style={{ padding: "7px 20px", fontSize: 13 }}
+                          onClick={() => saveContent(key, contentData[key] ?? "")}
+                          disabled={contentSaving[key]}
+                        >
+                          {contentSaving[key] ? "저장 중..." : contentSaved[key] ? "✓ 저장됨" : "저장"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.tableEmpty}>콘텐츠를 불러올 수 없습니다.</div>
+              )}
             </>
           )}
 
