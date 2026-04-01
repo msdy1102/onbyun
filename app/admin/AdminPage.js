@@ -10,6 +10,64 @@ const RISK_LABEL = { safe: "안전", caution: "주의", danger: "위험" };
 const RISK_COLOR = { safe: "#2a9d5c", caution: "#d08600", danger: "#e03535" };
 const PLAN_LABEL = { free: "무료", standard: "스탠다드", standard_yearly: "스탠다드(연)", pro: "프로", pro_yearly: "프로(연)" };
 
+
+// ── 어드민 콘텐츠 편집 전용 헬퍼 컴포넌트 ──
+// AdminPage 외부에 정의 → 매 렌더마다 새 함수가 생성되지 않아 textarea 포커스 유지
+function AdminField({ styles, label, rows, value, defaultValue, onChange, onSave, saving, saved }) {
+  return (
+    <div style={{ marginBottom:16 }}>
+      <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+        <label style={{ fontSize:12, fontWeight:700, color:"#334155" }}>{label}</label>
+        <button style={{ fontSize:11, color:"#94a3b8", background:"none", border:"none", cursor:"pointer" }}
+          onClick={() => onChange(defaultValue ?? "")}>↩ 기본값</button>
+      </div>
+      <textarea className={styles.fieldTextarea} rows={rows || 1}
+        value={value ?? ""}
+        onChange={e => onChange(e.target.value)}
+        style={{ marginBottom:2, fontSize:13, resize:"vertical" }} />
+      <div style={{ display:"flex", justifyContent:"flex-end", marginTop:4 }}>
+        <button className={styles.sendBtn} style={{ padding:"5px 16px", fontSize:12 }}
+          onClick={onSave} disabled={saving}>
+          {saving ? "저장 중…" : saved ? "✓ 저장됨" : "저장"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function AdminReviewCard({ styles, prefix, n, contentData, contentDefaults, onChangeField, onSaveAll }) {
+  const keys = [
+    [prefix + "_review" + n + "_quote",  "인용문",                               3],
+    [prefix + "_review" + n + "_name",   "이름 (예: 김○○)",                      1],
+    [prefix + "_review" + n + "_role",   "역할 (예: 직장인 29세 · 서울)",         1],
+    [prefix + "_review" + n + "_result", "결과 뱃지 (예: 보증금 340만 원 미반환)", 1],
+  ];
+  return (
+    <div style={{ background:"#f8fafc", borderRadius:12, border:"1px solid #e2e8f0", padding:"14px 16px", marginBottom:14 }}>
+      <div style={{ fontSize:13, fontWeight:700, color:"#334155", marginBottom:10 }}>리뷰 {n}</div>
+      {keys.map(([k, lbl, r]) => (
+        <div key={k} style={{ marginBottom:8 }}>
+          <label style={{ fontSize:11, fontWeight:600, color:"#64748b", display:"block", marginBottom:2 }}>{lbl}</label>
+          <textarea className={styles.fieldTextarea} rows={r}
+            value={contentData[k] ?? ""}
+            onChange={e => onChangeField(k, e.target.value)}
+            style={{ marginBottom:1, fontSize:12 }} />
+        </div>
+      ))}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
+        <button style={{ fontSize:11, color:"#94a3b8", background:"none", border:"none", cursor:"pointer" }}
+          onClick={() => keys.forEach(([k]) => onChangeField(k, contentDefaults[k] ?? ""))}>
+          ↩ 기본값으로
+        </button>
+        <button className={styles.sendBtn} style={{ padding:"6px 18px", fontSize:12 }}
+          onClick={() => onSaveAll(keys.map(([k]) => k))}>
+          리뷰 {n} 저장
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -456,17 +514,14 @@ export default function AdminPage() {
                             {isHidden && <div style={{ fontSize:10, color:"#94a3b8" }}>숨김</div>}
                           </div>
                           <div style={{ display:"flex", flexDirection:"column", gap:1 }}>
-                            <button
-                              onClick={e => { e.stopPropagation(); moveSectionUp(idx); }}
+                            <button onClick={e => { e.stopPropagation(); moveSectionUp(idx); }}
                               disabled={idx === 0}
-                              style={{ background:"none", border:"none", fontSize:9, color: idx===0?"#e2e8f0":"#64748b", cursor:idx===0?"default":"pointer", lineHeight:1, padding:"1px 3px" }}>▲</button>
-                            <button
-                              onClick={e => { e.stopPropagation(); moveSectionDown(idx); }}
+                              style={{ background:"none", border:"none", fontSize:9, color:idx===0?"#e2e8f0":"#64748b", cursor:idx===0?"default":"pointer", lineHeight:1, padding:"1px 3px" }}>▲</button>
+                            <button onClick={e => { e.stopPropagation(); moveSectionDown(idx); }}
                               disabled={idx === sectionOrder.length - 1}
                               style={{ background:"none", border:"none", fontSize:9, color:idx===sectionOrder.length-1?"#e2e8f0":"#64748b", cursor:idx===sectionOrder.length-1?"default":"pointer", lineHeight:1, padding:"1px 3px" }}>▼</button>
                           </div>
-                          <button
-                            onClick={e => { e.stopPropagation(); toggleSectionHidden(secId); }}
+                          <button onClick={e => { e.stopPropagation(); toggleSectionHidden(secId); }}
                             title={isHidden ? "표시하기" : "숨기기"}
                             style={{ background:"none", border:"none", cursor:"pointer", fontSize:12, padding:"2px 3px", opacity:isHidden?0.4:1 }}>
                             {isHidden ? "🙈" : "👁️"}
@@ -492,202 +547,221 @@ export default function AdminPage() {
                       </div>
                     )}
 
-                    {/* 재사용 헬퍼 — 단일 필드 */}
-                    {activeSection && (() => {
-                      const SaveBtn = ({ k }) => (
-                        <div style={{ display:"flex", justifyContent:"flex-end", marginTop:4 }}>
-                          <button className={styles.sendBtn} style={{ padding:"5px 16px", fontSize:12 }}
-                            onClick={() => saveContent(k, contentData[k] ?? "")} disabled={contentSaving[k]}>
-                            {contentSaving[k] ? "저장 중…" : contentSaved[k] ? "✓ 저장됨" : "저장"}
-                          </button>
+                    {activeSection === "hero" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>🏠</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S1 — 히어로 섹션</h2>
                         </div>
-                      );
-                      const Field = ({ k, label, rows = 1 }) => (
-                        <div style={{ marginBottom:16 }}>
-                          <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
-                            <label style={{ fontSize:12, fontWeight:700, color:"#334155" }}>{label}</label>
-                            <button style={{ fontSize:11, color:"#94a3b8", background:"none", border:"none", cursor:"pointer" }}
-                              onClick={() => setContentData(p => ({ ...p, [k]: contentDefaults[k] ?? "" }))}>↩ 기본값</button>
-                          </div>
-                          <textarea className={styles.fieldTextarea} rows={rows}
-                            value={contentData[k] ?? ""}
-                            onChange={e => setContentData(p => ({ ...p, [k]: e.target.value }))}
-                            style={{ marginBottom:2, fontSize:13, resize:"vertical" }}/>
-                          <SaveBtn k={k} />
+                        <AdminField styles={styles} label="헤드라인" rows={2}
+                          value={contentData["hero_headline"]} defaultValue={contentDefaults["hero_headline"]}
+                          onChange={v => setContentData(p => ({ ...p, hero_headline: v }))}
+                          onSave={() => saveContent("hero_headline", contentData["hero_headline"] ?? "")}
+                          saving={contentSaving["hero_headline"]} saved={contentSaved["hero_headline"]} />
+                        <AdminField styles={styles} label="서브 카피" rows={2}
+                          value={contentData["hero_subheadline"]} defaultValue={contentDefaults["hero_subheadline"]}
+                          onChange={v => setContentData(p => ({ ...p, hero_subheadline: v }))}
+                          onSave={() => saveContent("hero_subheadline", contentData["hero_subheadline"] ?? "")}
+                          saving={contentSaving["hero_subheadline"]} saved={contentSaved["hero_subheadline"]} />
+                        <AdminField styles={styles} label="뱃지 텍스트" rows={1}
+                          value={contentData["hero_badge"]} defaultValue={contentDefaults["hero_badge"]}
+                          onChange={v => setContentData(p => ({ ...p, hero_badge: v }))}
+                          onSave={() => saveContent("hero_badge", contentData["hero_badge"] ?? "")}
+                          saving={contentSaving["hero_badge"]} saved={contentSaved["hero_badge"]} />
+                        <AdminField styles={styles} label="메인 버튼 텍스트" rows={1}
+                          value={contentData["hero_cta_primary"]} defaultValue={contentDefaults["hero_cta_primary"]}
+                          onChange={v => setContentData(p => ({ ...p, hero_cta_primary: v }))}
+                          onSave={() => saveContent("hero_cta_primary", contentData["hero_cta_primary"] ?? "")}
+                          saving={contentSaving["hero_cta_primary"]} saved={contentSaved["hero_cta_primary"]} />
+                        <AdminField styles={styles} label="보조 버튼 텍스트" rows={1}
+                          value={contentData["hero_cta_secondary"]} defaultValue={contentDefaults["hero_cta_secondary"]}
+                          onChange={v => setContentData(p => ({ ...p, hero_cta_secondary: v }))}
+                          onSave={() => saveContent("hero_cta_secondary", contentData["hero_cta_secondary"] ?? "")}
+                          saving={contentSaving["hero_cta_secondary"]} saved={contentSaved["hero_cta_secondary"]} />
+                      </div>
+                    )}
+
+                    {activeSection === "contracts" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>📋</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S2 — 계약서 유형 섹션</h2>
                         </div>
-                      );
-
-                      const ReviewCard = ({ prefix, n }) => (
-                        <div style={{ background:"#f8fafc", borderRadius:12, border:"1px solid #e2e8f0", padding:"14px 16px", marginBottom:14 }}>
-                          <div style={{ fontSize:13, fontWeight:700, color:"#334155", marginBottom:10 }}>리뷰 {n}</div>
-                          {[
-                            [prefix + "_review" + n + "_quote",  "인용문",                               3],
-                            [prefix + "_review" + n + "_name",   "이름 (예: 김○○)",                      1],
-                            [prefix + "_review" + n + "_role",   "역할 (예: 직장인 29세 · 서울)",         1],
-                            [prefix + "_review" + n + "_result", "결과 뱃지 (예: 보증금 340만 원 미반환)", 1],
-                          ].map(([k, lbl, r]) => (
-                            <div key={k} style={{ marginBottom:8 }}>
-                              <label style={{ fontSize:11, fontWeight:600, color:"#64748b", display:"block", marginBottom:2 }}>{lbl}</label>
-                              <textarea className={styles.fieldTextarea} rows={r}
-                                value={contentData[k] ?? ""}
-                                onChange={e => setContentData(p => ({ ...p, [k]: e.target.value }))}
-                                style={{ marginBottom:1, fontSize:12 }}/>
-                            </div>
-                          ))}
-                          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6 }}>
-                            <button style={{ fontSize:11, color:"#94a3b8", background:"none", border:"none", cursor:"pointer" }}
-                              onClick={() => {
-                                [prefix+"_review"+n+"_quote", prefix+"_review"+n+"_name",
-                                 prefix+"_review"+n+"_role",  prefix+"_review"+n+"_result"].forEach(k =>
-                                  setContentData(p => ({ ...p, [k]: contentDefaults[k] ?? "" }))
-                                );
-                              }}>↩ 기본값으로</button>
-                            <button className={styles.sendBtn} style={{ padding:"6px 18px", fontSize:12 }}
-                              onClick={async () => {
-                                for (const k of [prefix+"_review"+n+"_quote", prefix+"_review"+n+"_name",
-                                                  prefix+"_review"+n+"_role",  prefix+"_review"+n+"_result"]) {
-                                  await saveContent(k, contentData[k] ?? "");
-                                }
-                              }}>리뷰 {n} 저장</button>
-                          </div>
+                        <AdminField styles={styles} label="섹션 제목" rows={1}
+                          value={contentData["contracts_title"]} defaultValue={contentDefaults["contracts_title"]}
+                          onChange={v => setContentData(p => ({ ...p, contracts_title: v }))}
+                          onSave={() => saveContent("contracts_title", contentData["contracts_title"] ?? "")}
+                          saving={contentSaving["contracts_title"]} saved={contentSaved["contracts_title"]} />
+                        <AdminField styles={styles} label="섹션 설명" rows={2}
+                          value={contentData["contracts_sub"]} defaultValue={contentDefaults["contracts_sub"]}
+                          onChange={v => setContentData(p => ({ ...p, contracts_sub: v }))}
+                          onSave={() => saveContent("contracts_sub", contentData["contracts_sub"] ?? "")}
+                          saving={contentSaving["contracts_sub"]} saved={contentSaved["contracts_sub"]} />
+                        <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
+                          💡 계약서 카드 6개는 Landing.js의 CONTRACT_TYPES 배열에서 관리합니다.
                         </div>
-                      );
+                      </div>
+                    )}
 
-                      return (
-                        <div className={styles.emailCard}>
-                          {/* S1 히어로 */}
-                          {activeSection === "hero" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>🏠</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S1 — 히어로 섹션</h2>
-                            </div>
-                            <Field k="hero_headline"      label="헤드라인"       rows={2} />
-                            <Field k="hero_subheadline"   label="서브 카피"       rows={2} />
-                            <Field k="hero_badge"         label="뱃지 텍스트"     rows={1} />
-                            <Field k="hero_cta_primary"   label="메인 버튼 텍스트" rows={1} />
-                            <Field k="hero_cta_secondary" label="보조 버튼 텍스트" rows={1} />
-                          </>)}
-
-                          {/* S2 계약서 유형 */}
-                          {activeSection === "contracts" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>📋</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S2 — 계약서 유형 섹션</h2>
-                            </div>
-                            <Field k="contracts_title" label="섹션 제목" rows={1} />
-                            <Field k="contracts_sub"   label="섹션 설명" rows={2} />
-                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
-                              💡 계약서 카드 6개 항목(근로·전세·프리랜서 등)은 코드 Landing.js의 CONTRACT_TYPES에서 관리합니다.
-                            </div>
-                          </>)}
-
-                          {/* S3 문제 공감 */}
-                          {activeSection === "problem" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>💬</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S3 — 문제 공감 섹션</h2>
-                            </div>
-                            <Field k="problem_title" label="섹션 제목" rows={1} />
-                            <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16, marginBottom:8 }}>
-                              <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>📝 인용 리뷰 편집 (이름은 ○○ 처리 필수)</div>
-                              <ReviewCard prefix="problem" n={1} />
-                              <ReviewCard prefix="problem" n={2} />
-                              <ReviewCard prefix="problem" n={3} />
-                            </div>
-                          </>)}
-
-                          {/* S4 사용 방법 */}
-                          {activeSection === "hiw" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>🔢</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S4 — 사용 방법 섹션</h2>
-                            </div>
-                            <Field k="hiw_title" label="섹션 제목" rows={1} />
-                            <Field k="hiw_sub"   label="섹션 설명" rows={2} />
-                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
-                              💡 3단계 아이콘·번호·설명은 코드 Landing.js의 STEPS 배열에서 관리합니다.
-                            </div>
-                          </>)}
-
-                          {/* S5 사회적 증명 */}
-                          {activeSection === "proof" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>⭐</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S5 — 사회적 증명 섹션</h2>
-                            </div>
-                            <Field k="proof_title" label="섹션 제목" rows={1} />
-                            <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16, marginBottom:8 }}>
-                              <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>⭐ 성공 리뷰 편집 (이름은 ○○ 처리 필수)</div>
-                              <ReviewCard prefix="proof" n={1} />
-                              <ReviewCard prefix="proof" n={2} />
-                              <ReviewCard prefix="proof" n={3} />
-                            </div>
-                          </>)}
-
-                          {/* S6 핵심 기능 */}
-                          {activeSection === "features" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
-                              <span style={{ fontSize:20 }}>✦</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S6 — 핵심 기능 섹션</h2>
-                            </div>
-                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"16px", fontSize:13, color:"#475569", lineHeight:1.8 }}>
-                              체크리스트·AI 분석 기능 설명 섹션입니다.<br/>
-                              현재 이 섹션의 텍스트는 코드에서 직접 관리됩니다 (Landing.js FeaturesSection).<br/>
-                              섹션을 숨기려면 좌측 👁️ 버튼을 사용하세요.
-                            </div>
-                          </>)}
-
-                          {/* S7 요금제 */}
-                          {activeSection === "pricing" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>💳</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S7 — 요금제 섹션</h2>
-                            </div>
-                            <Field k="pricing_title" label="섹션 제목" rows={1} />
-                            <Field k="pricing_sub"   label="섹션 설명" rows={2} />
-                            <div style={{ background:"#fff1f2", border:"1px solid #fecdd3", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#9f1239" }}>
-                              💡 플랜별 가격·기능 항목은 Landing.js의 PLANS 배열에서 관리합니다.<br/>
-                              유료 플랜 활성화: PLANS 배열에서 disabled: true → false로 변경하세요.
-                            </div>
-                          </>)}
-
-                          {/* S8 FAQ */}
-                          {activeSection === "faq" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>❓</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S8 — FAQ 섹션</h2>
-                            </div>
-                            <Field k="faq_title" label="섹션 제목" rows={1} />
-                            <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
-                              💡 FAQ 질문·답변 6개는 Landing.js의 FAQS 배열에서 관리합니다.
-                            </div>
-                          </>)}
-
-                          {/* S8-2 불편사항 */}
-                          {activeSection === "feedback" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
-                              <span style={{ fontSize:20 }}>📬</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S8-2 — 불편사항 접수</h2>
-                            </div>
-                            <div style={{ background:"#f0fdf4", border:"1px solid #86efac", borderRadius:10, padding:"16px", fontSize:13, color:"#166534", lineHeight:1.7 }}>
-                              불편사항 폼 섹션입니다. /api/feedback API를 통해 Supabase feedback 테이블에 저장됩니다.<br/>
-                              접수된 내용은 어드민 대시보드에서 확인할 수 있습니다.<br/>
-                              섹션을 숨기려면 좌측 👁️ 버튼을 클릭하세요.
-                            </div>
-                          </>)}
-
-                          {/* S9 최하단 CTA */}
-                          {activeSection === "cta" && (<>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
-                              <span style={{ fontSize:20 }}>🚀</span>
-                              <h2 className={styles.sectionTitle} style={{ margin:0 }}>S9 — 최하단 CTA 섹션</h2>
-                            </div>
-                            <Field k="cta_headline" label="헤드라인" rows={2} />
-                            <Field k="cta_sub"      label="서브카피"  rows={2} />
-                          </>)}
+                    {activeSection === "problem" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>💬</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S3 — 문제 공감 섹션</h2>
                         </div>
-                      );
-                    })()}
+                        <AdminField styles={styles} label="섹션 제목" rows={1}
+                          value={contentData["problem_title"]} defaultValue={contentDefaults["problem_title"]}
+                          onChange={v => setContentData(p => ({ ...p, problem_title: v }))}
+                          onSave={() => saveContent("problem_title", contentData["problem_title"] ?? "")}
+                          saving={contentSaving["problem_title"]} saved={contentSaved["problem_title"]} />
+                        <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16 }}>
+                          <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>📝 인용 리뷰 편집 (이름은 ○○ 처리 필수)</div>
+                          <AdminReviewCard styles={styles} prefix="problem" n={1} contentData={contentData} contentDefaults={contentDefaults}
+                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                          <AdminReviewCard styles={styles} prefix="problem" n={2} contentData={contentData} contentDefaults={contentDefaults}
+                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                          <AdminReviewCard styles={styles} prefix="problem" n={3} contentData={contentData} contentDefaults={contentDefaults}
+                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "hiw" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>🔢</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S4 — 사용 방법 섹션</h2>
+                        </div>
+                        <AdminField styles={styles} label="섹션 제목" rows={1}
+                          value={contentData["hiw_title"]} defaultValue={contentDefaults["hiw_title"]}
+                          onChange={v => setContentData(p => ({ ...p, hiw_title: v }))}
+                          onSave={() => saveContent("hiw_title", contentData["hiw_title"] ?? "")}
+                          saving={contentSaving["hiw_title"]} saved={contentSaved["hiw_title"]} />
+                        <AdminField styles={styles} label="섹션 설명" rows={2}
+                          value={contentData["hiw_sub"]} defaultValue={contentDefaults["hiw_sub"]}
+                          onChange={v => setContentData(p => ({ ...p, hiw_sub: v }))}
+                          onSave={() => saveContent("hiw_sub", contentData["hiw_sub"] ?? "")}
+                          saving={contentSaving["hiw_sub"]} saved={contentSaved["hiw_sub"]} />
+                        <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
+                          💡 3단계 아이콘·번호·설명은 Landing.js의 STEPS 배열에서 관리합니다.
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "proof" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>⭐</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S5 — 사회적 증명 섹션</h2>
+                        </div>
+                        <AdminField styles={styles} label="섹션 제목" rows={1}
+                          value={contentData["proof_title"]} defaultValue={contentDefaults["proof_title"]}
+                          onChange={v => setContentData(p => ({ ...p, proof_title: v }))}
+                          onSave={() => saveContent("proof_title", contentData["proof_title"] ?? "")}
+                          saving={contentSaving["proof_title"]} saved={contentSaved["proof_title"]} />
+                        <div style={{ borderTop:"1px solid #e2e8f0", paddingTop:16 }}>
+                          <div style={{ fontSize:12, fontWeight:700, color:"#64748b", marginBottom:12 }}>⭐ 성공 리뷰 편집 (이름은 ○○ 처리 필수)</div>
+                          <AdminReviewCard styles={styles} prefix="proof" n={1} contentData={contentData} contentDefaults={contentDefaults}
+                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                          <AdminReviewCard styles={styles} prefix="proof" n={2} contentData={contentData} contentDefaults={contentDefaults}
+                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                          <AdminReviewCard styles={styles} prefix="proof" n={3} contentData={contentData} contentDefaults={contentDefaults}
+                            onChangeField={(k, v) => setContentData(p => ({ ...p, [k]: v }))}
+                            onSaveAll={ks => ks.reduce((acc, k) => acc.then(() => saveContent(k, contentData[k] ?? "")), Promise.resolve())} />
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "features" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
+                          <span style={{ fontSize:20 }}>✦</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S6 — 핵심 기능 섹션</h2>
+                        </div>
+                        <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"16px", fontSize:13, color:"#475569", lineHeight:1.8 }}>
+                          체크리스트·AI 분석 기능 설명 섹션입니다.<br/>
+                          텍스트는 Landing.js FeaturesSection에서 직접 관리됩니다.<br/>
+                          섹션을 숨기려면 좌측 👁️ 버튼을 사용하세요.
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "pricing" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>💳</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S7 — 요금제 섹션</h2>
+                        </div>
+                        <AdminField styles={styles} label="섹션 제목" rows={1}
+                          value={contentData["pricing_title"]} defaultValue={contentDefaults["pricing_title"]}
+                          onChange={v => setContentData(p => ({ ...p, pricing_title: v }))}
+                          onSave={() => saveContent("pricing_title", contentData["pricing_title"] ?? "")}
+                          saving={contentSaving["pricing_title"]} saved={contentSaved["pricing_title"]} />
+                        <AdminField styles={styles} label="섹션 설명" rows={2}
+                          value={contentData["pricing_sub"]} defaultValue={contentDefaults["pricing_sub"]}
+                          onChange={v => setContentData(p => ({ ...p, pricing_sub: v }))}
+                          onSave={() => saveContent("pricing_sub", contentData["pricing_sub"] ?? "")}
+                          saving={contentSaving["pricing_sub"]} saved={contentSaved["pricing_sub"]} />
+                        <div style={{ background:"#fff1f2", border:"1px solid #fecdd3", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#9f1239" }}>
+                          💡 플랜별 가격·기능은 Landing.js의 PLANS 배열에서 관리합니다. 유료 플랜 활성화: disabled: true → false.
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "faq" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>❓</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S8 — FAQ 섹션</h2>
+                        </div>
+                        <AdminField styles={styles} label="섹션 제목" rows={1}
+                          value={contentData["faq_title"]} defaultValue={contentDefaults["faq_title"]}
+                          onChange={v => setContentData(p => ({ ...p, faq_title: v }))}
+                          onSave={() => saveContent("faq_title", contentData["faq_title"] ?? "")}
+                          saving={contentSaving["faq_title"]} saved={contentSaved["faq_title"]} />
+                        <div style={{ background:"#f0f7ff", border:"1px solid #b3d4f5", borderRadius:10, padding:"12px 14px", fontSize:12, color:"#475569" }}>
+                          💡 FAQ 질문·답변 항목은 Landing.js의 FAQS 배열에서 관리합니다.
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "feedback" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:16 }}>
+                          <span style={{ fontSize:20 }}>📬</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S8-2 — 불편사항 접수</h2>
+                        </div>
+                        <div style={{ background:"#f0fdf4", border:"1px solid #86efac", borderRadius:10, padding:"16px", fontSize:13, color:"#166534", lineHeight:1.7 }}>
+                          불편사항 폼 섹션입니다. /api/feedback → Supabase feedback 테이블에 저장됩니다.<br/>
+                          섹션을 숨기려면 좌측 👁️ 버튼을 클릭하세요.
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === "cta" && (
+                      <div className={styles.emailCard}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+                          <span style={{ fontSize:20 }}>🚀</span>
+                          <h2 className={styles.sectionTitle} style={{ margin:0 }}>S9 — 최하단 CTA 섹션</h2>
+                        </div>
+                        <AdminField styles={styles} label="헤드라인" rows={2}
+                          value={contentData["cta_headline"]} defaultValue={contentDefaults["cta_headline"]}
+                          onChange={v => setContentData(p => ({ ...p, cta_headline: v }))}
+                          onSave={() => saveContent("cta_headline", contentData["cta_headline"] ?? "")}
+                          saving={contentSaving["cta_headline"]} saved={contentSaved["cta_headline"]} />
+                        <AdminField styles={styles} label="서브카피" rows={2}
+                          value={contentData["cta_sub"]} defaultValue={contentDefaults["cta_sub"]}
+                          onChange={v => setContentData(p => ({ ...p, cta_sub: v }))}
+                          onSave={() => saveContent("cta_sub", contentData["cta_sub"] ?? "")}
+                          saving={contentSaving["cta_sub"]} saved={contentSaved["cta_sub"]} />
+                      </div>
+                    )}
+
                   </div>
                 </div>
               ) : (
@@ -695,7 +769,6 @@ export default function AdminPage() {
               )}
             </>
           )}
-
 
           {/* ── 감사 로그 ── */}
           {activeTab === "audit" && (
